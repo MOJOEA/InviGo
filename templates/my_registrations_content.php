@@ -79,12 +79,11 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                             <?php endif; ?>
                         <?php endif; ?>
                         <?php if (!$reg['checked_in'] && !$isPast): ?>
-                            <a href="/events/<?= $reg['event_id'] ?>/withdraw" 
-                                onclick="return confirm('ยืนยันการยกเลิกการลงทะเบียน?')"
+                            <button onclick="showWithdrawModal('<?= $reg['event_id'] ?>', '<?= sanitize($reg['title']) ?>')" 
                                 class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 text-sm font-bold inline-flex items-center gap-1 hover:bg-red-200">
                                 <span class="material-symbols-outlined text-sm">close</span>
                                 ยกเลิก
-                            </a>
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -92,6 +91,29 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-3xl text-red-600">warning</span>
+            </div>
+            <h3 class="text-xl font-black mb-2">ยืนยันการยกเลิก</h3>
+            <p class="text-gray-500 mb-2">คุณต้องการยกเลิกการลงทะเบียนกิจกรรม</p>
+            <p id="withdrawEventTitle" class="font-bold text-black mb-6 text-lg"></p>
+            <div class="flex gap-3">
+                <button onclick="closeWithdrawModal()" class="neo-btn flex-1 bg-gray-200 py-3 font-bold">
+                    ไม่ยกเลิก
+                </button>
+                <a id="withdrawConfirmLink" href="#" class="neo-btn flex-1 bg-red-400 text-white py-3 font-bold text-center inline-flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                    ยืนยัน
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- OTP Modal -->
 <div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
@@ -116,6 +138,23 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 </div>
 
 <script>
+function showWithdrawModal(eventId, eventTitle) {
+    document.getElementById('withdrawEventTitle').textContent = eventTitle;
+    document.getElementById('withdrawConfirmLink').href = '/events/' + eventId + '/withdraw';
+    document.getElementById('withdrawModal').classList.remove('hidden');
+}
+
+function closeWithdrawModal() {
+    document.getElementById('withdrawModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('withdrawModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeWithdrawModal();
+    }
+});
+
 function showOtpModal(otp, expires) {
     document.getElementById('otpCode').textContent = otp;
     document.getElementById('otpExpires').textContent = expires;
