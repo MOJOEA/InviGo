@@ -76,16 +76,6 @@
             </div>
         </div>
         
-        <div class="mb-6">
-            <label class="block font-bold mb-1">รหัสผ่านใหม่ (เว้นว่างหากไม่ต้องการเปลี่ยน)</label>
-            <div class="password-container">
-                <input type="password" name="password" id="passwordInput"
-                       class="neo-input w-full p-2 with-toggle" 
-                       placeholder="••••••••">
-                <span class="password-toggle material-symbols-outlined" onclick="togglePassword('passwordInput', this)">visibility_off</span>
-            </div>
-        </div>
-        
         <div class="flex gap-3">
             <button type="submit" class="neo-btn flex-1 bg-[#FFE600] py-3 font-bold inline-flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined">save</span> บันทึก
@@ -161,18 +151,6 @@
     if (genderInput.value) {
         const initialBtn = document.querySelector('.gender-btn[data-gender="' + genderInput.value + '"]');
         if (initialBtn) initialBtn.classList.add('selected');
-    }
-    
-    // Password toggle function
-    function togglePassword(inputId, icon) {
-        const input = document.getElementById(inputId);
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.textContent = 'visibility';
-        } else {
-            input.type = 'password';
-            icon.textContent = 'visibility_off';
-        }
     }
     </script>
 </div>
