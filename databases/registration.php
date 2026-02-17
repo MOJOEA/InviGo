@@ -28,7 +28,7 @@ function isUserRegistered(int $userId, int $eventId): bool {
 }
 function getRegistrationsByUser(int $userId): array {
     $conn = getConnection();
-    $stmt = $conn->prepare("SELECT r.*, e.title, e.event_date, e.location, e.max_participants,
+    $stmt = $conn->prepare("SELECT r.*, e.title, e.event_date, e.end_date, e.location, e.max_participants,
         u.name as organizer_name,
         (SELECT COUNT(*) FROM Registrations WHERE event_id = e.id AND status = 'approved') as approved_count
         FROM Registrations r 
