@@ -181,7 +181,6 @@ if (displayOtpCountdownEl) {
                 displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
             }
         }, 1000);
-        // Initial display
         const mins = Math.floor(displayOtpRemaining / 60);
         const secs = displayOtpRemaining % 60;
         displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
@@ -207,7 +206,6 @@ document.addEventListener('click', function(e) {
 </script>
 <?php endif; ?>
 
-<!-- Quick OTP Modal (for check-in button) -->
 <div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
         <div class="text-center">
