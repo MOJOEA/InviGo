@@ -66,5 +66,18 @@
         </a>
         <?php endif; ?>
     </nav>
+
+    <script>
+        const clickSound = new Audio('/sfx/click4_11.wav');
+        clickSound.volume = 0.3;
+        
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, a, .neo-btn, .neo-btn-small, .gender-btn, .nav-item, [onclick]');
+            if (target) {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(() => {});
+            }
+        });
+    </script>
 </body>
 </html>
