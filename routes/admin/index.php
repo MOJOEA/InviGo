@@ -20,7 +20,7 @@ $result = $conn->query("SELECT COUNT(*) as total FROM Registrations");
 $stats['registrations'] = $result->fetch_assoc()['total'];
 
 // Recent users
-$result = $conn->query("SELECT id, name, email, created_at FROM Users ORDER BY created_at DESC LIMIT 5");
+$result = $conn->query("SELECT id, name, email, profile_image, created_at FROM Users ORDER BY created_at DESC LIMIT 5");
 $recentUsers = $result->fetch_all(MYSQLI_ASSOC);
 
 // Recent events
