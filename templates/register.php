@@ -36,6 +36,30 @@
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
+        .birth-date-container {
+            position: relative;
+        }
+        .birth-date-container input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+        .age-display {
+            font-size: 0.875rem;
+            color: #10b981;
+            margin-top: 0.25rem;
+            font-weight: bold;
+        }
+        .age-display.invalid {
+            color: #ef4444;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -82,9 +106,12 @@
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="text-left">
+                <div class="text-left birth-date-container">
                     <label class="font-bold ml-1">วันเกิด <span class="text-red-500">*</span></label>
-                    <input type="date" name="birth_date" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" required value="<?= isset($_POST['birth_date']) ? sanitize($_POST['birth_date']) : '' ?>">
+                    <input type="date" id="birthDate" name="birth_date" max="" min=""
+                           class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" 
+                           required value="<?= isset($_POST['birth_date']) ? sanitize($_POST['birth_date']) : '' ?>">
+                    <p id="ageDisplay" class="age-display"></p>
                     <?php if (!empty($errors['birth_date'])): ?>
                         <p class="error-message"><?= sanitize($errors['birth_date']) ?></p>
                     <?php endif; ?>
@@ -106,5 +133,55 @@
         </form>
         <p class="mt-6 text-sm text-gray-400 font-bold">มีบัญชีแล้ว? <a href="/login" class="text-black underline">เข้าสู่ระบบ</a></p>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const birthDateInput = document.getElementById('birthDate');
+        const ageDisplay = document.getElementById('ageDisplay');
+        
+        // Set min/max dates (10-120 years ago)
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 10, today.getMonth(), today.getDate());
+        const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
+        
+        birthDateInput.max = maxDate.toISOString().split('T')[0];
+        birthDateInput.min = minDate.toISOString().split('T')[0];
+        
+        function validateBirthDate() {
+            const birthDate = new Date(birthDateInput.value);
+            const today = new Date();
+            
+            if (!birthDateInput.value) {
+                ageDisplay.textContent = '';
+                return;
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            if (birthDate > today) {
+                ageDisplay.textContent = 'วันเกิดไม่ถูกต้อง';
+                ageDisplay.classList.add('invalid');
+            } else if (age < 10) {
+                ageDisplay.textContent = 'อายุ ' + age + ' ปี (ต้องไม่ต่ำกว่า 10 ปี)';
+                ageDisplay.classList.add('invalid');
+            } else if (age > 120) {
+                ageDisplay.textContent = 'อายุ ' + age + ' ปี (ต้องไม่เกิน 120 ปี)';
+                ageDisplay.classList.add('invalid');
+            } else {
+                ageDisplay.textContent = 'อายุ ' + age + ' ปี';
+                ageDisplay.classList.remove('invalid');
+            }
+        }
+        
+        birthDateInput.addEventListener('change', validateBirthDate);
+        
+        if (birthDateInput.value) {
+            validateBirthDate();
+        }
+    });
+    </script>
 </body>
 </html>

@@ -29,6 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (empty($birthDate)) {
         $errors['birth_date'] = 'กรุณาเลือกวันเกิด';
+    } else {
+        $birth = new DateTime($birthDate);
+        $today = new DateTime();
+        $age = $today->diff($birth)->y;
+        if ($birth > $today) {
+            $errors['birth_date'] = 'วันเกิดต้องไม่เป็นวันในอนาคต';
+        } elseif ($age < 10) {
+            $errors['birth_date'] = 'อายุต้องไม่ต่ำกว่า 10 ปี';
+        } elseif ($age > 120) {
+            $errors['birth_date'] = 'อายุต้องไม่เกิน 120 ปี';
+        }
     }
     if (empty($gender)) {
         $errors['gender'] = 'กรุณาเลือกเพศ';
