@@ -34,7 +34,7 @@ function updateUser(int $id, array $data): bool {
     $fields = [];
     $values = [];
     $types = '';
-    foreach (['name', 'email', 'password', 'birth_date', 'gender'] as $field) {
+    foreach (['name', 'email', 'password', 'birth_date', 'gender', 'profile_image'] as $field) {
         if (isset($data[$field])) {
             $fields[] = "$field = ?";
             $values[] = $data[$field];
