@@ -78,7 +78,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                                 </a>
                             <?php endif; ?>
                         <?php endif; ?>
-                        <?php if (!$reg['checked_in'] && !$isPast): ?>
+                        <?php if (!$reg['checked_in'] && !$isPast && $reg['status'] !== 'approved'): ?>
                             <button onclick="showWithdrawModal('<?= $reg['event_id'] ?>', '<?= sanitize($reg['title']) ?>')" 
                                 class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 text-sm font-bold inline-flex items-center gap-1 hover:bg-red-200">
                                 <span class="material-symbols-outlined text-sm">close</span>
