@@ -60,6 +60,21 @@
         .age-display.invalid {
             color: #ef4444;
         }
+        .gender-btn {
+            cursor: pointer;
+            background: white;
+        }
+        .gender-btn:hover {
+            background: #FFFBF0;
+        }
+        .gender-btn.selected {
+            background: #FFE600;
+            box-shadow: 2px 2px 0 0 black;
+            transform: translate(0, 0);
+        }
+        .gender-btn.selected .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -118,12 +133,21 @@
                 </div>
                 <div class="text-left">
                     <label class="font-bold ml-1">เพศ <span class="text-red-500">*</span></label>
-                    <select name="gender" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 bg-white" required>
-                        <option value="">เลือกเพศ</option>
-                        <option value="male" <?= (isset($_POST['gender']) && $_POST['gender'] === 'male') ? 'selected' : '' ?>>ชาย</option>
-                        <option value="female" <?= (isset($_POST['gender']) && $_POST['gender'] === 'female') ? 'selected' : '' ?>>หญิง</option>
-                        <option value="other" <?= (isset($_POST['gender']) && $_POST['gender'] === 'other') ? 'selected' : '' ?>>อื่นๆ</option>
-                    </select>
+                    <input type="hidden" name="gender" id="genderInput" value="<?= isset($_POST['gender']) ? sanitize($_POST['gender']) : '' ?>">
+                    <div class="grid grid-cols-3 gap-2 mt-1">
+                        <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="male">
+                            <span class="material-symbols-outlined text-2xl">man</span>
+                            <span class="text-xs font-bold">ชาย</span>
+                        </button>
+                        <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="female">
+                            <span class="material-symbols-outlined text-2xl">woman</span>
+                            <span class="text-xs font-bold">หญิง</span>
+                        </button>
+                        <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="other">
+                            <span class="material-symbols-outlined text-2xl">wc</span>
+                            <span class="text-xs font-bold">อื่นๆ</span>
+                        </button>
+                    </div>
                     <?php if (!empty($errors['gender'])): ?>
                         <p class="error-message"><?= sanitize($errors['gender']) ?></p>
                     <?php endif; ?>
@@ -180,6 +204,25 @@
         
         if (birthDateInput.value) {
             validateBirthDate();
+        }
+        // Gender selection
+        const genderBtns = document.querySelectorAll('.gender-btn');
+        const genderInput = document.getElementById('genderInput');
+        
+        genderBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                genderBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                genderInput.value = btn.dataset.gender;
+            });
+        });
+        
+        // Set initial selected gender
+        if (genderInput.value) {
+            const initialBtn = document.querySelector('.gender-btn[data-gender="' + genderInput.value + '"]');
+            if (initialBtn) {
+                initialBtn.classList.add('selected');
+            }
         }
     });
     </script>
