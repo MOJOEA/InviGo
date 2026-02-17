@@ -52,13 +52,17 @@
         
         <div class="border-t-2 border-dashed border-gray-200 pt-4 mt-4">
             <h3 class="font-bold mb-3">การตั้งค่า</h3>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mb-3">
                 <span class="text-sm text-gray-500">เสียงเอฟเฟกต์</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="soundToggle" class="sr-only peer">
                     <div class="w-12 h-7 bg-white border-2 border-black shadow-[2px_2px_0px_0px_black] peer-checked:bg-[#FFE600] peer-checked:shadow-[2px_2px_0px_0px_black] rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-black after:rounded-full after:h-5 after:w-5 after:shadow-[1px_1px_0px_0px_black] after:transition-all peer-checked:after:translate-x-5 peer-checked:after:bg-white"></div>
                 </label>
             </div>
+            <button onclick="showTutorial()" class="w-full text-left text-sm text-gray-500 hover:text-black flex items-center gap-2 py-2">
+                <span class="material-symbols-outlined">school</span>
+                ดูการแนะนำใช้งานอีกครั้ง
+            </button>
         </div>
     </div>
     
