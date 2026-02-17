@@ -36,6 +36,25 @@
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
+        /* Password Toggle */
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+        .password-toggle:hover {
+            color: #000;
+        }
+        .neo-input.with-toggle {
+            padding-right: 45px;
+        }
         /* Debug Modal */
         .debug-btn {
             position: fixed;
@@ -197,7 +216,10 @@
             </div>
             <div class="text-left mb-6">
                 <label class="font-bold ml-1">รหัสผ่าน</label>
-                <input type="password" name="password" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" placeholder="••••••" required>
+                <div class="password-container">
+                    <input type="password" name="password" id="passwordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 with-toggle" placeholder="••••••" required>
+                    <span class="password-toggle material-symbols-outlined" onclick="togglePassword('passwordInput', this)">visibility_off</span>
+                </div>
                 <?php if (!empty($errors['password'])): ?>
                     <p class="error-message"><?= sanitize($errors['password']) ?></p>
                 <?php endif; ?>
@@ -220,10 +242,21 @@
         
         function fillLogin(email, password) {
             document.querySelector('input[name="email"]').value = email;
-            document.querySelector('input[name="password"]').value = password;
+            document.querySelector('#passwordInput').value = password;
             closeDebugModal();
             // Optional: Auto submit
             // document.querySelector('form').submit();
+        }
+        
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
         }
     </script>
 </body>

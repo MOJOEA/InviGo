@@ -36,6 +36,25 @@
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
+        /* Password Toggle */
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+        .password-toggle:hover {
+            color: #000;
+        }
+        .neo-input.with-toggle {
+            padding-right: 45px;
+        }
         .birth-date-container {
             position: relative;
         }
@@ -107,14 +126,20 @@
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="text-left">
                     <label class="font-bold ml-1">รหัสผ่าน <span class="text-red-500">*</span></label>
-                    <input type="password" name="password" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" placeholder="••••••" required>
+                    <div class="password-container">
+                        <input type="password" name="password" id="passwordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 with-toggle" placeholder="••••••" required>
+                        <span class="password-toggle material-symbols-outlined" onclick="togglePassword('passwordInput', this)">visibility_off</span>
+                    </div>
                     <?php if (!empty($errors['password'])): ?>
                         <p class="error-message"><?= sanitize($errors['password']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div class="text-left">
                     <label class="font-bold ml-1">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
-                    <input type="password" name="confirm_password" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" placeholder="••••••" required>
+                    <div class="password-container">
+                        <input type="password" name="confirm_password" id="confirmPasswordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 with-toggle" placeholder="••••••" required>
+                        <span class="password-toggle material-symbols-outlined" onclick="togglePassword('confirmPasswordInput', this)">visibility_off</span>
+                    </div>
                     <?php if (!empty($errors['confirm_password'])): ?>
                         <p class="error-message"><?= sanitize($errors['confirm_password']) ?></p>
                     <?php endif; ?>
@@ -224,6 +249,18 @@
                 initialBtn.classList.add('selected');
             }
         }
+        
+        // Password toggle function
+        window.togglePassword = function(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        };
     });
     </script>
 </body>
