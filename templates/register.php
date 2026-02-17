@@ -128,7 +128,7 @@
                     <label class="font-bold ml-1">รหัสผ่าน <span class="text-red-500">*</span></label>
                     <div class="password-container">
                         <input type="password" name="password" id="passwordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 with-toggle" placeholder="••••••" required>
-                        <span class="password-toggle material-symbols-outlined" onclick="togglePassword('passwordInput', this)">visibility_off</span>
+                        <span class="password-toggle material-symbols-outlined" onclick="togglePassword(this)">visibility_off</span>
                     </div>
                     <?php if (!empty($errors['password'])): ?>
                         <p class="error-message"><?= sanitize($errors['password']) ?></p>
@@ -136,13 +136,8 @@
                 </div>
                 <div class="text-left">
                     <label class="font-bold ml-1">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
-                    <div class="password-container">
-                        <input type="password" name="confirm_password" id="confirmPasswordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50 with-toggle" placeholder="••••••" required>
-                        <span class="password-toggle material-symbols-outlined" onclick="togglePassword('confirmPasswordInput', this)">visibility_off</span>
-                    </div>
-                    <?php if (!empty($errors['confirm_password'])): ?>
-                        <p class="error-message"><?= sanitize($errors['confirm_password']) ?></p>
-                    <?php endif; ?>
+                    <input type="password" name="confirm_password" id="confirmPasswordInput" class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" placeholder="••••••" required>
+                    <p id="matchStatus" class="text-xs mt-1"></p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -250,17 +245,61 @@
             }
         }
         
-        // Password toggle function
-        window.togglePassword = function(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
+        // Password toggle function - toggles both fields
+        let isPasswordVisible = false;
+        window.togglePassword = function(icon) {
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmInput = document.getElementById('confirmPasswordInput');
+            
+            isPasswordVisible = !isPasswordVisible;
+            
+            if (isPasswordVisible) {
+                passwordInput.type = 'text';
+                confirmInput.type = 'text';
                 icon.textContent = 'visibility';
             } else {
-                input.type = 'password';
+                passwordInput.type = 'password';
+                confirmInput.type = 'password';
                 icon.textContent = 'visibility_off';
             }
         };
+        
+        // Real-time password validation
+        const passwordInput = document.getElementById('passwordInput');
+        const confirmInput = document.getElementById('confirmPasswordInput');
+        const matchStatus = document.getElementById('matchStatus');
+        
+        function validatePasswords() {
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+            
+            if (!password && !confirm) {
+                matchStatus.textContent = '';
+                return;
+            }
+            
+            // Check minimum length
+            if (password.length < 6) {
+                matchStatus.textContent = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+                matchStatus.className = 'text-xs mt-1 text-red-500';
+                return;
+            }
+            
+            // Check if passwords match
+            if (confirm && password !== confirm) {
+                matchStatus.textContent = 'รหัสผ่านไม่ตรงกัน';
+                matchStatus.className = 'text-xs mt-1 text-red-500';
+                return;
+            }
+            
+            if (password === confirm && password.length >= 6) {
+                matchStatus.textContent = 'รหัสผ่านตรงกัน ✓';
+                matchStatus.className = 'text-xs mt-1 text-green-500';
+            }
+        }
+        
+        passwordInput.addEventListener('input', validatePasswords);
+        confirmInput.addEventListener('input', validatePasswords);
     });
     </script>
 </body>
