@@ -68,10 +68,20 @@
     </nav>
 
     <script>
+        function getCookie(name) {
+            const value = '; ' + document.cookie;
+            const parts = value.split('; ' + name + '=');
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
         const clickSound = new Audio('/sfx/click4_11.wav');
         clickSound.volume = 0.3;
         
         document.addEventListener('click', function(e) {
+            const soundEnabled = getCookie('soundEnabled') !== 'false';
+            if (!soundEnabled) return;
+            
             const target = e.target.closest('button, a, .neo-btn, .neo-btn-small, .gender-btn, .nav-item, [onclick]');
             if (target) {
                 clickSound.currentTime = 0;

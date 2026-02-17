@@ -49,6 +49,17 @@
                 </div>
             </div>
         </div>
+        
+        <div class="border-t-2 border-dashed border-gray-200 pt-4 mt-4">
+            <h3 class="font-bold mb-3">การตั้งค่า</h3>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">เสียงเอฟเฟกต์</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="soundToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+        </div>
     </div>
     
     <div class="flex gap-3">
@@ -69,5 +80,27 @@
         </a>
     </div>
 </div>
+
+<script>
+function getCookie(name) {
+    const value = '; ' + document.cookie;
+    const parts = value.split('; ' + name + '=');
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+}
+
+const soundToggle = document.getElementById('soundToggle');
+const soundEnabled = getCookie('soundEnabled') !== 'false';
+soundToggle.checked = soundEnabled;
+
+soundToggle.addEventListener('change', function() {
+    setCookie('soundEnabled', this.checked, 365);
+});
+</script>
 
 <?php include 'footer.php' ?>

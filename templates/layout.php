@@ -206,9 +206,19 @@ if (!$currentUser) {
                 </div>
             </div>
             <script>
-                const toastSound = new Audio('/sfx/click3_3.wav');
-                toastSound.volume = 0.3;
-                toastSound.play().catch(() => {});
+                function getCookie(name) {
+                    const value = '; ' + document.cookie;
+                    const parts = value.split('; ' + name + '=');
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                    return null;
+                }
+
+                const soundEnabled = getCookie('soundEnabled') !== 'false';
+                if (soundEnabled) {
+                    const toastSound = new Audio('/sfx/click3_3.wav');
+                    toastSound.volume = 0.3;
+                    toastSound.play().catch(() => {});
+                }
                 
                 setTimeout(() => {
                     document.getElementById('toast').classList.add('show');
