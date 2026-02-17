@@ -15,6 +15,31 @@ if (!$currentUser) {
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <style>
+        /* Neo Brutalist Background Animations */
+        @keyframes float {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            33% { transform: translate(20px, -40px) rotate(5deg); }
+            66% { transform: translate(-15px, 15px) rotate(-3deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+        @keyframes float-slow {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            50% { transform: translate(-30px, 30px) rotate(-10deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+        .animate-float { animation: float 12s ease-in-out infinite; }
+        .animate-float-slow { animation: float-slow 15s ease-in-out infinite; }
+        .animate-float-reverse { animation: float 18s ease-in-out infinite reverse; }
+        .floating-shape {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-dot-pattern {
+            background-color: #FFFBF0;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
         body {
             font-family: 'Kanit', sans-serif;
             background-color: #FFFBF0;
@@ -123,7 +148,28 @@ if (!$currentUser) {
         }
     </style>
 </head>
-<body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0">
+<body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 bg-dot-pattern relative overflow-x-hidden">
+    <!-- Background Floating Shapes -->
+    <div id="background-elements" class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-shape animate-float top-[10%] right-[10%] w-16 h-16 md:w-20 md:h-20 text-[#FFE600]">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="filter: drop-shadow(3px 3px 0px #000);">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+        </div>
+        <div class="floating-shape animate-float-slow bottom-[15%] left-[12%] w-12 h-12 md:w-16 md:h-16 bg-[#ff94c2] rounded-full border-2 border-black neo-shadow"></div>
+        <div class="floating-shape animate-float-reverse bottom-[20%] right-[15%] w-10 h-10 md:w-12 md:h-12 bg-[#a3e635] border-2 border-black neo-shadow rotate-12"></div>
+        <div class="floating-shape animate-float-slow top-[20%] left-[15%] w-8 h-8 md:w-10 md:h-10 text-[#a3e635] opacity-60">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="filter: drop-shadow(2px 2px 0px #000);">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+        </div>
+        <div class="floating-shape animate-float top-[45%] left-[5%] w-6 h-6 md:w-8 md:h-8 bg-[#FFE600] rounded-full border-2 border-black neo-shadow"></div>
+        <div class="floating-shape animate-float-slow top-[35%] right-[5%] w-8 h-8 md:w-10 md:h-10 bg-[#ff94c2] border-2 border-black neo-shadow -rotate-12"></div>
+        <div class="floating-shape animate-float top-[15%] left-[45%] text-gray-300 font-black text-4xl opacity-40">+</div>
+        <div class="floating-shape animate-float-slow bottom-[35%] left-[40%] text-gray-300 font-black text-3xl opacity-40">×</div>
+        <div class="floating-shape animate-float top-[60%] right-[30%] text-gray-300 font-black text-5xl opacity-40">+</div>
+    </div>
+    <!-- Sidebar -->
     <aside class="hidden md:flex flex-col w-64 bg-white border-r-2 border-black p-6 h-screen sticky top-0">
         <div class="flex items-center gap-2 mb-10">
             <div class="w-10 h-10 bg-[#FFE600] border-2 border-black rounded flex items-center justify-center">
