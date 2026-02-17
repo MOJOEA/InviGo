@@ -1,34 +1,5 @@
 </main>
 
-<div id="loadingOverlay" class="loading-overlay">
-    <div class="spinner"></div>
-</div>
-
-<script>
-function showLoading() {
-    document.getElementById('loadingOverlay').classList.add('active');
-}
-function hideLoading() {
-    document.getElementById('loadingOverlay').classList.remove('active');
-}
-
-document.querySelectorAll('form').forEach(form => {
-    form.addEventListener('submit', function() {
-        if (!form.hasAttribute('data-no-loading')) {
-            showLoading();
-        }
-    });
-});
-
-document.querySelectorAll('a[href]:not([href^="#"]):not([href^="javascript:"]):not([target])').forEach(link => {
-    link.addEventListener('click', function() {
-        if (!link.hasAttribute('data-no-loading')) {
-            showLoading();
-        }
-    });
-});
-</script>
-
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
         <div class="bg-white p-6 rounded-xl border-2 border-black shadow-[6px_6px_0px_0px_black] max-w-sm w-full mx-4">
             <div class="w-16 h-16 bg-red-100 border-2 border-red-500 rounded-xl flex items-center justify-center mx-auto mb-4">
