@@ -1,7 +1,7 @@
 <?php
 function getUserById(int $id): ?array {
     $conn = getConnection();
-    $stmt = $conn->prepare("SELECT id, name, email, birth_date, gender, profile_image, created_at FROM Users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, name, email, birth_date, gender, profile_image, role, created_at FROM Users WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -9,7 +9,7 @@ function getUserById(int $id): ?array {
 }
 function getUserByEmail(string $email): ?array {
     $conn = getConnection();
-    $stmt = $conn->prepare("SELECT id, name, email, password, birth_date, gender, profile_image FROM Users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, name, email, password, birth_date, gender, profile_image, role FROM Users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
