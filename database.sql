@@ -35,6 +35,7 @@ CREATE TABLE Events (
     event_date DATETIME NOT NULL,
     end_date DATETIME,
     max_participants INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_events_user
