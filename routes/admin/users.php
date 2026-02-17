@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Get all users
-$result = $conn->query("SELECT id, name, email, birth_date, gender, role, created_at FROM Users ORDER BY created_at DESC");
+$result = $conn->query("SELECT id, name, email, profile_image, birth_date, gender, role, created_at FROM Users ORDER BY created_at DESC");
 $users = $result->fetch_all(MYSQLI_ASSOC);
 
 renderView('admin/users', [
