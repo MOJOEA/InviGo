@@ -21,6 +21,12 @@ $currentUser = getCurrentUser();
         <a href="/profile" class="nav-item <?= ($activePage ?? '') === 'profile' ? 'active' : '' ?>">
             <span class="material-symbols-outlined">person</span> โปรไฟล์
         </a>
+        <?php if (isAdmin()): ?>
+        <a href="/admin" class="nav-item <?= ($activePage ?? '') === 'admin' ? 'active' : '' ?>">
+            <span class="material-symbols-outlined text-red-500">admin_panel_settings</span> 
+            <span class="text-red-500">จัดการระบบ</span>
+        </a>
+        <?php endif; ?>
     </nav>
     <div class="mt-auto">
         <a href="/profile" class="block mb-4 p-3 bg-white rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black] hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
