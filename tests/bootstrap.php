@@ -1,8 +1,14 @@
 <?php
-require_once __DIR__ . '/../public/index.php';
+// Define test constants
+define('BASE_DIR', dirname(__DIR__));
+define('TEMPLATES_DIR', BASE_DIR . '/templates');
+define('INCLUDES_DIR', BASE_DIR . '/includes');
+define('ROUTES_DIR', BASE_DIR . '/routes');
+define('DATABASES_DIR', BASE_DIR . '/databases');
+define('PUBLIC_DIR', BASE_DIR . '/public');
 
-// Mock functions for testing
-function mockGetConnection() {
+// Mock getConnection before loading includes
+function getConnection() {
     return new class {
         public function prepare($sql) {
             return new class {
@@ -30,9 +36,16 @@ function mockGetConnection() {
     };
 }
 
-// Override getConnection for tests
-if (!function_exists('getConnection')) {
-    function getConnection() {
-        return mockGetConnection();
-    }
+// Load helpers
+require_once INCLUDES_DIR . '/helpers/auth.php';
+require_once INCLUDES_DIR . '/helpers/date.php';
+require_once INCLUDES_DIR . '/helpers/flash.php';
+require_once INCLUDES_DIR . '/helpers/format.php';
+require_once INCLUDES_DIR . '/helpers/password.php';
+require_once INCLUDES_DIR . '/helpers/sanitize.php';
+
+// Start session for tests
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
+
