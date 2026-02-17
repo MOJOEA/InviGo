@@ -9,20 +9,17 @@
     </a>
 </div>
 <?php if (empty($events)): ?>
-    <div class="text-center py-12">
-        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">event_note</span>
-        <p class="text-gray-500 font-bold text-lg">ยังไม่มีกิจกรรม</p>
-        <p class="text-gray-400 text-sm mb-6">สร้างกิจกรรมแรกของคุณเลย!</p>
-    </div>
-<?php else: ?>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Add New Event Card -->
+        <!-- Add New Event Card (shown when no events) -->
         <a href="/events/create" class="neo-card bg-white rounded-2xl border-2 border-black overflow-hidden opacity-50 border-dashed hover:opacity-80 transition-opacity">
             <div class="h-full flex flex-col items-center justify-center p-10 text-gray-400 gap-4 min-h-[300px]">
                 <span class="material-symbols-outlined text-6xl">add_circle</span>
                 <span class="font-black text-lg">เพิ่มกิจกรรมใหม่</span>
             </div>
         </a>
+    </div>
+<?php else: ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php foreach ($events as $event): 
             $now = new DateTime();
             $endDateStr = $event['end_date'] ?? $event['event_date'];
@@ -76,6 +73,13 @@
                 </div>
             </div>
         <?php endforeach; ?>
+        <!-- Add New Event Card (shown at the end/right side) -->
+        <a href="/events/create" class="neo-card bg-white rounded-2xl border-2 border-black overflow-hidden opacity-50 border-dashed hover:opacity-80 transition-opacity">
+            <div class="h-full flex flex-col items-center justify-center p-10 text-gray-400 gap-4 min-h-[300px]">
+                <span class="material-symbols-outlined text-6xl">add_circle</span>
+                <span class="font-black text-lg">เพิ่มกิจกรรมใหม่</span>
+            </div>
+        </a>
     </div>
 <?php endif; ?>
 <?php include 'footer.php' ?>
