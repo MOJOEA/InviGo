@@ -159,38 +159,48 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 
 <script>
 // Countdown for display OTP modal
-let displayOtpRemaining = <?= strtotime($otpData['expires']) - time() ?>;
+<?php if ($otpData && isset($otpData['expires'])): ?>
+let displayOtpRemaining = <?= max(0, strtotime($otpData['expires']) - time()) ?>;
+<?php else: ?>
+let displayOtpRemaining = 0;
+<?php endif; ?>
 const displayOtpCountdownEl = document.getElementById('displayOtpCountdown');
-if (displayOtpRemaining > 0) {
-    const displayOtpTimer = setInterval(() => {
-        displayOtpRemaining--;
-        if (displayOtpRemaining <= 0) {
-            clearInterval(displayOtpTimer);
-            displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
-            displayOtpCountdownEl.parentElement.classList.add('text-red-600');
-            document.getElementById('displayOtpCode').textContent = '------';
-        } else {
-            const mins = Math.floor(displayOtpRemaining / 60);
-            const secs = displayOtpRemaining % 60;
-            displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-        }
-    }, 1000);
-    // Initial display
-    const mins = Math.floor(displayOtpRemaining / 60);
-    const secs = displayOtpRemaining % 60;
-    displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-} else {
-    displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
-    document.getElementById('displayOtpCode').textContent = '------';
+if (displayOtpCountdownEl) {
+    if (displayOtpRemaining > 0) {
+        const displayOtpTimer = setInterval(() => {
+            displayOtpRemaining--;
+            if (displayOtpRemaining <= 0) {
+                clearInterval(displayOtpTimer);
+                displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
+                displayOtpCountdownEl.parentElement.classList.add('text-red-600');
+                const otpCodeEl = document.getElementById('displayOtpCode');
+                if (otpCodeEl) otpCodeEl.textContent = '------';
+            } else {
+                const mins = Math.floor(displayOtpRemaining / 60);
+                const secs = displayOtpRemaining % 60;
+                displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            }
+        }, 1000);
+        // Initial display
+        const mins = Math.floor(displayOtpRemaining / 60);
+        const secs = displayOtpRemaining % 60;
+        displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    } else {
+        displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
+        const otpCodeEl = document.getElementById('displayOtpCode');
+        if (otpCodeEl) otpCodeEl.textContent = '------';
+    }
 }
 
 function closeOtpDisplayModal() {
-    document.getElementById('otpDisplayModal').classList.add('hidden');
+    const modal = document.getElementById('otpDisplayModal');
+    if (modal) modal.classList.add('hidden');
 }
 
 // Close modal when clicking outside
-document.getElementById('otpDisplayModal').addEventListener('click', function(e) {
-    if (e.target === this) {
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('otpDisplayModal');
+    if (modal && e.target === modal) {
         closeOtpDisplayModal();
     }
 });
