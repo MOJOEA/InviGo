@@ -1,7 +1,7 @@
 <?php
 function getEventById(int $id): ?array {
     $conn = getConnection();
-    $stmt = $conn->prepare("SELECT e.*, u.name as organizer_name, u.profile_image as organizer_image FROM Events e LEFT JOIN Users u ON e.user_id = u.id WHERE e.id = ?");
+    $stmt = $conn->prepare("SELECT e.*, u.name as organizer_name, u.profile_image as organizer_image, u.role as organizer_role FROM Events e LEFT JOIN Users u ON e.user_id = u.id WHERE e.id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();

@@ -76,9 +76,16 @@ $isFull = $approvedCount >= $event['max_participants'];
                      class="w-full h-full object-cover"
                      onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
             </div>
-            <div>
+            <div class="flex items-center gap-2">
                 <p class="text-sm text-gray-500">จัดโดย</p>
-                <p class="font-bold text-lg"><?= sanitize($event['organizer_name']) ?></p>
+                <p class="font-bold text-lg flex items-center gap-1">
+                    <?= sanitize($event['organizer_name']) ?>
+                    <?php if (($event['organizer_role'] ?? 0) == 1): ?>
+                        <span class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center" title="Admin">
+                            <span class="material-symbols-outlined text-white text-xs">check</span>
+                        </span>
+                    <?php endif; ?>
+                </p>
             </div>
         </div>
         <div class="flex flex-wrap gap-4 mb-6 text-sm">
