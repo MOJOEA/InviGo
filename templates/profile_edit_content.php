@@ -52,18 +52,28 @@
         
         <div class="mb-4">
             <label class="block font-bold mb-1">วันเกิด</label>
-            <input type="date" name="birth_date" value="<?= sanitize($user['birth_date'] ?? '') ?>" 
+            <input type="date" id="birthDate" name="birth_date" value="<?= sanitize($user['birth_date'] ?? '') ?>" 
                    class="neo-input w-full p-2">
+            <p id="ageDisplay" class="age-display"></p>
         </div>
         
         <div class="mb-4">
             <label class="block font-bold mb-1">เพศ</label>
-            <select name="gender" class="neo-input w-full p-2">
-                <option value="">ไม่ระบุ</option>
-                <option value="ชาย" <?= ($user['gender'] ?? '') === 'ชาย' ? 'selected' : '' ?>>ชาย</option>
-                <option value="หญิง" <?= ($user['gender'] ?? '') === 'หญิง' ? 'selected' : '' ?>>หญิง</option>
-                <option value="อื่นๆ" <?= ($user['gender'] ?? '') === 'อื่นๆ' ? 'selected' : '' ?>>อื่นๆ</option>
-            </select>
+            <input type="hidden" name="gender" id="genderInput" value="<?= sanitize($user['gender'] ?? '') ?>">
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="male">
+                    <span class="material-symbols-outlined text-2xl">man</span>
+                    <span class="text-xs font-bold">ชาย</span>
+                </button>
+                <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="female">
+                    <span class="material-symbols-outlined text-2xl">woman</span>
+                    <span class="text-xs font-bold">หญิง</span>
+                </button>
+                <button type="button" class="gender-btn neo-input p-3 flex flex-col items-center gap-1 transition-all" data-gender="other">
+                    <span class="material-symbols-outlined text-2xl">wc</span>
+                    <span class="text-xs font-bold">อื่นๆ</span>
+                </button>
+            </div>
         </div>
         
         <div class="mb-6">
@@ -94,6 +104,60 @@
             }
             reader.readAsDataURL(file);
         }
+    }
+    
+    // Age validation
+    const birthDateInput = document.getElementById('birthDate');
+    const ageDisplay = document.getElementById('ageDisplay');
+    
+    function validateBirthDate() {
+        const birthDate = new Date(birthDateInput.value);
+        const today = new Date();
+        
+        if (!birthDateInput.value) {
+            ageDisplay.textContent = '';
+            return;
+        }
+        
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        
+        if (birthDate > today) {
+            ageDisplay.textContent = 'วันเกิดไม่ถูกต้อง';
+            ageDisplay.classList.add('invalid');
+        } else if (age < 10) {
+            ageDisplay.textContent = 'อายุ ' + age + ' ปี (ต้องไม่ต่ำกว่า 10 ปี)';
+            ageDisplay.classList.add('invalid');
+        } else if (age > 120) {
+            ageDisplay.textContent = 'อายุ ' + age + ' ปี (ต้องไม่เกิน 120 ปี)';
+            ageDisplay.classList.add('invalid');
+        } else {
+            ageDisplay.textContent = 'อายุ ' + age + ' ปี';
+            ageDisplay.classList.remove('invalid');
+        }
+    }
+    
+    birthDateInput.addEventListener('change', validateBirthDate);
+    if (birthDateInput.value) validateBirthDate();
+    
+    // Gender selection
+    const genderBtns = document.querySelectorAll('.gender-btn');
+    const genderInput = document.getElementById('genderInput');
+    
+    genderBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            genderBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            genderInput.value = btn.dataset.gender;
+        });
+    });
+    
+    if (genderInput.value) {
+        const initialBtn = document.querySelector('.gender-btn[data-gender="' + genderInput.value + '"]');
+        if (initialBtn) initialBtn.classList.add('selected');
     }
     </script>
 </div>

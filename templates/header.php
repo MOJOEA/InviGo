@@ -118,6 +118,30 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             background-color: #fee2e2;
             color: #dc2626;
         }
+        .gender-btn {
+            cursor: pointer;
+            background: white;
+        }
+        .gender-btn:hover {
+            background: #FFFBF0;
+        }
+        .gender-btn.selected {
+            background: #FFE600;
+            box-shadow: 2px 2px 0 0 black;
+            transform: translate(0, 0);
+        }
+        .gender-btn.selected .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+        .age-display {
+            font-size: 0.875rem;
+            color: #10b981;
+            margin-top: 0.25rem;
+            font-weight: bold;
+        }
+        .age-display.invalid {
+            color: #ef4444;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0">

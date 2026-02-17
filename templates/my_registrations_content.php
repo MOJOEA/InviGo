@@ -92,7 +92,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
     </div>
 <?php endif; ?>
 
-<!-- Withdraw Modal -->
+
 <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
         <div class="text-center">
@@ -115,7 +115,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
     </div>
 </div>
 
-<!-- Full OTP Display Modal -->
+
 <?php if ($otpData): ?>
 <div id="otpDisplayModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
