@@ -63,8 +63,11 @@
             <div class="space-y-3">
                 <?php foreach ($recentUsers as $user): ?>
                 <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span class="material-symbols-outlined text-gray-500">person</span>
+                    <div class="w-10 h-10 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
+                        <img src="<?= sanitize($user['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
+                             alt="Profile" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
                     </div>
                     <div class="flex-1">
                         <p class="font-bold"><?= sanitize($user['name']) ?></p>

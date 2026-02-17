@@ -9,7 +9,6 @@ $success = '';
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
     $userId = (int)$_POST['user_id'];
-    // Prevent deleting self
     if ($userId === getCurrentUserId()) {
         $errors[] = 'ไม่สามารถลบตัวเองได้';
     } else {
@@ -19,6 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $success = 'ลบผู้ใช้สำเร็จ';
         } else {
             $errors[] = 'เกิดข้อผิดพลาดในการลบผู้ใช้';
+        }
+    }
+}
+
+// Handle role update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_role') {
+    $userId = (int)$_POST['user_id'];
+    $newRole = (int)$_POST['role'];
+    if ($userId === getCurrentUserId()) {
+        $errors[] = 'ไม่สามารถเปลี่ยนบทบาทตัวเองได้';
+    } else {
+        $stmt = $conn->prepare("UPDATE Users SET role = ? WHERE id = ?");
+        $stmt->bind_param("ii", $newRole, $userId);
+        if ($stmt->execute()) {
+            $success = 'อัปเดตบทบาทสำเร็จ';
+        } else {
+            $errors[] = 'เกิดข้อผิดพลาดในการอัปเดตบทบาท';
         }
     }
 }

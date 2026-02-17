@@ -46,7 +46,15 @@
                 <?php foreach ($users as $user): ?>
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                     <td class="p-4"><?= $user['id'] ?></td>
-                    <td class="p-4 font-bold"><?= sanitize($user['name']) ?></td>
+                    <td class="p-4 font-bold flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full border border-black overflow-hidden bg-gray-100 flex-shrink-0">
+                            <img src="<?= sanitize($user['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
+                                 alt="Profile" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
+                        </div>
+                        <?= sanitize($user['name']) ?>
+                    </td>
                     <td class="p-4"><?= sanitize($user['email']) ?></td>
                     <td class="p-4"><?= $user['birth_date'] ? date('d/m/Y', strtotime($user['birth_date'])) : '-' ?></td>
                     <td class="p-4"><?= $user['gender'] ? ucfirst($user['gender']) : '-' ?></td>
@@ -59,13 +67,23 @@
                     </td>
                     <td class="p-4 text-sm"><?= date('d/m/Y H:i', strtotime($user['created_at'])) ?></td>
                     <td class="p-4 text-center">
-                        <form method="POST" action="/admin/users" class="inline" onsubmit="return confirm('แน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                            <button type="submit" class="text-red-500 hover:text-red-700" title="ลบ">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
-                        </form>
+                        <div class="flex justify-center gap-2">
+                            <form method="POST" action="/admin/users" class="inline">
+                                <input type="hidden" name="action" value="update_role">
+                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                <input type="hidden" name="role" value="<?= $user['role'] == 1 ? 0 : 1 ?>">
+                                <button type="submit" class="text-blue-500 hover:text-blue-700" title="<?= $user['role'] == 1 ? 'ลดเป็น User' : 'ยกเป็น Admin' ?>">
+                                    <span class="material-symbols-outlined">swap_horiz</span>
+                                </button>
+                            </form>
+                            <form method="POST" action="/admin/users" class="inline" onsubmit="return confirm('แน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                <button type="submit" class="text-red-500 hover:text-red-700" title="ลบ">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
