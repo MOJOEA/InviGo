@@ -9,14 +9,14 @@
     <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
         แก้ไขโปรไฟล์
         <span class="material-symbols-outlined">edit</span>
-        <?php if (isAdmin()): ?>
+        <?php if (($user['role'] ?? 0) == 1): ?>
         <span class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center" title="Admin">
             <span class="material-symbols-outlined text-white text-sm">check</span>
         </span>
         <?php endif; ?>
     </h2>
     
-    <?php if (isAdmin()): ?>
+    <?php if (($user['role'] ?? 0) == 1): ?>
     <div class="mb-4">
         <a href="/admin" class="neo-btn w-full bg-red-100 py-3 font-bold inline-flex items-center justify-center gap-2 text-red-600 border-red-300">
             <span class="material-symbols-outlined">admin_panel_settings</span>
