@@ -2,12 +2,12 @@
 <?php
 function getStatusBadge(string $status, bool $checkedIn = false): string {
     if ($status === 'approved' && $checkedIn) {
-        return '<span class="bg-blue-100 text-blue-700 border-blue-500 px-2 py-1 rounded border text-xs font-bold">✓ เช็คชื่อแล้ว</span>';
+        return '<span class="bg-blue-100 text-blue-700 border-blue-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> เช็คชื่อแล้ว</span>';
     }
     return match($status) {
-        'pending' => '<span class="bg-yellow-100 text-yellow-700 border-yellow-500 px-2 py-1 rounded border text-xs font-bold">⏳ รออนุมัติ</span>',
-        'approved' => '<span class="bg-green-100 text-green-700 border-green-500 px-2 py-1 rounded border text-xs font-bold">✓ อนุมัติแล้ว</span>',
-        'rejected' => '<span class="bg-red-100 text-red-700 border-red-500 px-2 py-1 rounded border text-xs font-bold">✗ ปฏิเสธ</span>',
+        'pending' => '<span class="bg-yellow-100 text-yellow-700 border-yellow-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> รออนุมัติ</span>',
+        'approved' => '<span class="bg-green-100 text-green-700 border-green-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check</span> อนุมัติแล้ว</span>',
+        'rejected' => '<span class="bg-red-100 text-red-700 border-red-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>',
         default => '<span class="bg-gray-100 px-2 py-1 rounded border text-xs font-bold">' . $status . '</span>'
     };
 }

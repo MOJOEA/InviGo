@@ -6,13 +6,19 @@ $badgeClass = match($status) {
     'rejected' => 'bg-red-100 text-red-700 border-red-500',
     default => 'bg-gray-100 text-gray-700 border-gray-500'
 };
+$icon = match($status) {
+    'pending' => 'schedule',
+    'approved' => $checkedIn ? 'check_circle' : 'check',
+    'rejected' => 'close',
+    default => 'help'
+};
 $label = match($status) {
     'pending' => 'รออนุมัติ',
-    'approved' => $checkedIn ? '✓ เช็คชื่อแล้ว' : 'อนุมัติแล้ว',
+    'approved' => $checkedIn ? 'เช็คชื่อแล้ว' : 'อนุมัติแล้ว',
     'rejected' => 'ปฏิเสธ',
     default => $status
 };
 ?>
-<span class="<?= $badgeClass ?> px-2 py-1 rounded border text-xs font-bold">
-    <?= $label ?>
+<span class="<?= $badgeClass ?> px-2 py-1 rounded border text-xs font-bold inline-flex items-center gap-1">
+    <span class="material-symbols-outlined text-sm"><?= $icon ?></span> <?= $label ?>
 </span>
