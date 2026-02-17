@@ -36,3 +36,30 @@ function requireGuest(): void
         exit;
     }
 }
+
+function isAdmin(): bool
+{
+    if (!isLoggedIn()) {
+        return false;
+    }
+    $conn = getConnection();
+    $stmt = $conn->prepare("SELECT role FROM Users WHERE id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        return $user['role'] == 1;
+    }
+    return false;
+}
+
+function requireAdmin(): void
+{
+    requireAuth();
+    if (!isAdmin()) {
+        http_response_code(403);
+        renderView('403');
+        exit;
+    }
+}

@@ -14,6 +14,12 @@ function notFound()
 }
 function getFilePath(string $uri): string
 {
+    if (preg_match('/^admin\/(\w+)$/', $uri, $matches)) {
+        return ROUTE_DIR . '/admin/' . $matches[1] . '.php';
+    }
+    if ($uri === 'admin') {
+        return ROUTE_DIR . '/admin/index.php';
+    }
     if (preg_match('/^events\/(\d+)$/', $uri, $matches)) {
         return ROUTE_DIR . '/events/view.php';
     }

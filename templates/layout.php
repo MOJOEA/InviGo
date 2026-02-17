@@ -145,6 +145,12 @@ if (!$currentUser) {
             <a href="/profile" class="nav-item <?= ($activePage ?? '') === 'profile' ? 'active' : '' ?>">
                 <span class="material-symbols-outlined">person</span> โปรไฟล์
             </a>
+            <?php if (isAdmin()): ?>
+            <a href="/admin" class="nav-item <?= ($activePage ?? '') === 'admin' ? 'active' : '' ?>">
+                <span class="material-symbols-outlined text-red-500">admin_panel_settings</span> 
+                <span class="text-red-500">จัดการระบบ</span>
+            </a>
+            <?php endif; ?>
             <?php else: ?>
             <div class="nav-item opacity-50 cursor-not-allowed" title="กรุณาเข้าสู่ระบบ">
                 <span class="material-symbols-outlined">calendar_month</span> กิจกรรมของฉัน
