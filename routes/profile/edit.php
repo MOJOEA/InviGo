@@ -51,5 +51,6 @@ $title = 'แก้ไขโปรไฟล์';
 $activePage = 'profile';
 renderView('profile_edit_content', [
     'user' => $user,
-    'errors' => $errors
+    'errors' => $errors,
+    'activePage' => $activePage
 ]);
