@@ -145,12 +145,6 @@ if (!$currentUser) {
             <a href="/profile" class="nav-item <?= ($activePage ?? '') === 'profile' ? 'active' : '' ?>">
                 <span class="material-symbols-outlined">person</span> โปรไฟล์
             </a>
-            <?php if (isAdmin()): ?>
-            <a href="/admin" class="nav-item <?= ($activePage ?? '') === 'admin' ? 'active' : '' ?>">
-                <span class="material-symbols-outlined text-red-500">admin_panel_settings</span> 
-                <span class="text-red-500">จัดการระบบ</span>
-            </a>
-            <?php endif; ?>
             <?php else: ?>
             <div class="nav-item opacity-50 cursor-not-allowed" title="กรุณาเข้าสู่ระบบ">
                 <span class="material-symbols-outlined">calendar_month</span> กิจกรรมของฉัน
@@ -240,12 +234,6 @@ if (!$currentUser) {
             <span class="material-symbols-outlined text-xl">person</span>
             <span class="text-[10px] font-bold">โปรไฟล์</span>
         </a>
-        <?php if (isAdmin()): ?>
-        <a href="/admin" class="flex flex-col items-center p-2 <?= ($activePage ?? '') === 'admin' ? 'text-red-600' : 'text-red-400' ?>">
-            <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
-            <span class="text-[10px] font-bold">แอดมิน</span>
-        </a>
-        <?php endif; ?>
         <?php else: ?>
         <div class="flex flex-col items-center p-2 text-gray-400 opacity-50" title="กรุณาเข้าสู่ระบบ">
             <span class="material-symbols-outlined text-xl">calendar_month</span>
