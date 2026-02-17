@@ -199,7 +199,6 @@ if (!$currentUser) {
                 <span class="material-symbols-outlined bg-[#FFE600] border-2 border-black rounded p-1">grid_view</span>
                 InviGo
             </h1>
-            <a href="/logout" class="text-red-500"><span class="material-symbols-outlined">logout</span></a>
         </div>
         <?php if ($flash): ?>
             <div id="toast" class="toast toast-<?= $flash['type'] ?>">
