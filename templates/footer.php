@@ -194,6 +194,7 @@
             document.querySelectorAll('.nav-item, nav a').forEach(el => el.classList.remove('active'));
             setCookie('tutorialSeen', 'true', 365);
             document.getElementById('tutorialOverlay').classList.add('hidden');
+            window.location.href = '/explore';
         }
 
         if (getCookie('tutorialSeen') !== 'true') {
