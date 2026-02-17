@@ -8,7 +8,14 @@
                      class="w-full h-full object-cover"
                      onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
             </div>
-            <h2 class="text-2xl font-black"><?= sanitize($user['name']) ?></h2>
+            <h2 class="text-2xl font-black flex items-center gap-2">
+                <?= sanitize($user['name']) ?>
+                <?php if (($user['role'] ?? 0) == 1): ?>
+                <span class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center" title="Admin">
+                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                </span>
+                <?php endif; ?>
+            </h2>
             <p class="text-gray-500"><?= sanitize($user['email']) ?></p>
         </div>
         
@@ -48,6 +55,12 @@
         <a href="/profile/edit" class="neo-btn flex-1 bg-[#FFE600] py-3 font-bold text-center inline-flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">edit</span> แก้ไขโปรไฟล์
         </a>
+        <?php if (($user['role'] ?? 0) == 1): ?>
+        <a href="/admin" class="neo-btn flex-1 bg-red-100 text-red-600 py-3 font-bold text-center inline-flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            จัดการระบบ
+        </a>
+        <?php endif; ?>
     </div>
     
     <div class="mt-4">
