@@ -4,7 +4,7 @@ $currentUser = getCurrentUser();
 <aside class="hidden md:flex flex-col w-64 bg-white border-r-2 border-black p-6 h-screen sticky top-0">
     <div class="flex items-center gap-2 mb-10">
         <div class="w-10 h-10 bg-[#FFE600] border-2 border-black rounded flex items-center justify-center">
-            <span class="material-symbols-outlined">grid_view</span>
+            <span class="material-symbols-outlined">confirmation_number</span>
         </div>
         <h1 class="font-black text-xl">InviGo</h1>
     </div>
@@ -38,8 +38,6 @@ $currentUser = getCurrentUser();
                 <span class="material-symbols-outlined text-gray-400">chevron_right</span>
             </div>
         </a>
-        <a href="/logout" class="flex items-center gap-2 text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">
-            <span class="material-symbols-outlined">logout</span> ออกจากระบบ
-        </a>
+     
     </div>
 </aside>

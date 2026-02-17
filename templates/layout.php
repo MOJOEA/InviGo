@@ -127,7 +127,7 @@ if (!$currentUser) {
     <aside class="hidden md:flex flex-col w-64 bg-white border-r-2 border-black p-6 h-screen sticky top-0">
         <div class="flex items-center gap-2 mb-10">
             <div class="w-10 h-10 bg-[#FFE600] border-2 border-black rounded flex items-center justify-center">
-                <span class="material-symbols-outlined">grid_view</span>
+                <span class="material-symbols-outlined">confirmation_number</span>
             </div>
             <h1 class="font-black text-xl">InviGo</h1>
         </div>
@@ -174,9 +174,7 @@ if (!$currentUser) {
                     <span class="material-symbols-outlined text-gray-400">chevron_right</span>
                 </div>
             </a>
-            <a href="/logout" class="flex items-center gap-2 text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">
-                <span class="material-symbols-outlined">logout</span> ออกจากระบบ
-            </a>
+   
             <?php else: ?>
             <a href="/login" class="block mb-4 p-3 bg-[#FFE600] rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black] hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <div class="flex items-center gap-3">
@@ -196,7 +194,7 @@ if (!$currentUser) {
     <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
         <div class="md:hidden flex justify-between items-center mb-6">
             <h1 class="font-black text-xl flex items-center gap-2">
-                <span class="material-symbols-outlined bg-[#FFE600] border-2 border-black rounded p-1">grid_view</span>
+                <span class="material-symbols-outlined bg-[#FFE600] border-2 border-black rounded p-1">confirmation_number</span>
                 InviGo
             </h1>
         </div>

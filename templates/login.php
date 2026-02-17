@@ -41,7 +41,7 @@
 <body class="flex items-center justify-center min-h-screen p-4">
     <div class="neo-box bg-white p-8 w-full max-w-sm text-center">
         <div class="w-16 h-16 bg-[#FFE600] border-2 border-black rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <span class="material-symbols-outlined text-4xl">grid_view</span>
+            <span class="material-symbols-outlined text-4xl">confirmation_number</span>
         </div>
         <h1 class="text-3xl font-black mb-2">InviGo</h1>
         <p class="text-gray-500 font-bold mb-6">ระบบจัดการกิจกรรมสุดคูล</p>
