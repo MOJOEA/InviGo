@@ -118,40 +118,18 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 <!-- Full OTP Display Modal -->
 <?php if ($otpData): ?>
 <div id="otpDisplayModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-[8px_8px_0px_0px_black]">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
         <div class="text-center">
-            <div class="w-20 h-20 bg-[#FFE600] border-2 border-black rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <span class="material-symbols-outlined text-5xl">qr_code</span>
-            </div>
-            <h3 class="text-xl font-black mb-2">รหัส OTP ของคุณ</h3>
-            <p class="text-gray-500 font-bold mb-6"><?= sanitize($otpData['event_title']) ?></p>
+            <h3 class="text-xl font-black mb-2">รหัส OTP เช็คอิน</h3>
+            <p class="text-sm text-gray-500 mb-4">แสดงรหัสนี้ให้ผู้จัดงานสแกน</p>
             
-            <div class="bg-black text-white rounded-xl p-6 mb-6">
-                <p class="text-sm text-gray-400 mb-2">รหัส 6 หลัก</p>
+            <div class="bg-[#D4FF33] border-4 border-black rounded-xl p-6 mb-4">
                 <p id="displayOtpCode" class="text-5xl font-black tracking-widest font-mono"><?= $otpData['code'] ?></p>
             </div>
             
-            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6">
-                <p class="text-red-600 font-bold flex items-center justify-center gap-2 mb-3">
-                    <span class="material-symbols-outlined">timer</span>
-                    <span>หมดอายุใน <span id="displayOtpCountdown" class="font-mono"></span></span>
-                </p>
-                <div class="progress-bar">
-                    <div id="otpProgressBar" class="progress-fill" style="width: 100%"></div>
-                </div>
-            </div>
-            
-            <div class="text-sm text-gray-500 space-y-1 mb-6">
-                <p><span class="font-bold">วันที่:</span> <?= formatThaiDateTime($otpData['event_date']) ?></p>
-                <p><span class="font-bold">สถานที่:</span> <?= sanitize($otpData['location']) ?></p>
-            </div>
-            
-            <div class="p-4 bg-yellow-50 rounded-xl border-2 border-yellow-300 mb-6">
-                <p class="text-sm font-bold text-yellow-800">
-                    <span class="material-symbols-outlined inline-block mr-1">info</span>
-                    แสดงรหัสนี้ให้ผู้จัดงานเพื่อเช็คชื่อเข้างาน
-                </p>
-            </div>
+            <p class="text-sm text-gray-500 mb-6">
+                หมดอายุ: <span id="displayOtpCountdown" class="font-bold text-red-500"></span> น.
+            </p>
             
             <button onclick="closeOtpDisplayModal()" class="neo-btn bg-gray-200 px-6 py-3 font-bold w-full">
                 ปิด
@@ -164,48 +142,43 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 // Countdown for display OTP modal
 <?php if ($otpData && isset($otpData['expires'])): ?>
 let displayOtpRemaining = <?= max(0, strtotime($otpData['expires']) - time()) ?>;
-const OTP_TOTAL_TIME = 1800;
 <?php else: ?>
 let displayOtpRemaining = 0;
-const OTP_TOTAL_TIME = 1800;
 <?php endif; ?>
 const displayOtpCountdownEl = document.getElementById('displayOtpCountdown');
-const otpProgressBar = document.getElementById('otpProgressBar');
-if (displayOtpCountdownEl) {
+
+function updateCountdown() {
+    if (!displayOtpCountdownEl) return;
+    
     if (displayOtpRemaining > 0) {
-        const displayOtpTimer = setInterval(() => {
-            displayOtpRemaining--;
-            if (displayOtpRemaining <= 0) {
-                clearInterval(displayOtpTimer);
-                displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
-                displayOtpCountdownEl.parentElement.classList.add('text-red-600');
-                const otpCodeEl = document.getElementById('displayOtpCode');
-                if (otpCodeEl) otpCodeEl.textContent = '------';
-                if (otpProgressBar) otpProgressBar.style.width = '0%';
-            } else {
-                const mins = Math.floor(displayOtpRemaining / 60);
-                const secs = displayOtpRemaining % 60;
-                displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-                if (otpProgressBar) {
-                    const percentage = (displayOtpRemaining / OTP_TOTAL_TIME) * 100;
-                    otpProgressBar.style.width = percentage + '%';
-                }
-            }
-        }, 1000);
-        const mins = Math.floor(displayOtpRemaining / 60);
+        const hours = Math.floor(displayOtpRemaining / 3600);
+        const mins = Math.floor((displayOtpRemaining % 3600) / 60);
         const secs = displayOtpRemaining % 60;
-        displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-        if (otpProgressBar) {
-            const percentage = (displayOtpRemaining / OTP_TOTAL_TIME) * 100;
-            otpProgressBar.style.width = percentage + '%';
+        
+        let timeStr = '';
+        if (hours > 0) {
+            timeStr = String(hours).padStart(2, '0') + ':' + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        } else {
+            timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
         }
+        displayOtpCountdownEl.textContent = timeStr;
     } else {
         displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
         const otpCodeEl = document.getElementById('displayOtpCode');
         if (otpCodeEl) otpCodeEl.textContent = '------';
-        if (otpProgressBar) otpProgressBar.style.width = '0%';
     }
 }
+
+if (displayOtpRemaining > 0) {
+    const displayOtpTimer = setInterval(() => {
+        displayOtpRemaining--;
+        if (displayOtpRemaining <= 0) {
+            clearInterval(displayOtpTimer);
+        }
+        updateCountdown();
+    }, 1000);
+}
+updateCountdown();
 
 function closeOtpDisplayModal() {
     const modal = document.getElementById('otpDisplayModal');
