@@ -39,9 +39,13 @@ function uploadProfileImage(array $file): string
     if ($file['size'] > 2 * 1024 * 1024) {
         return '';
     }
+    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles/';
+    if (!is_dir($uploadDir)) {
+        @mkdir($uploadDir, 0777, true);
+    }
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $newFilename = uniqid('profile_') . '.' . $extension;
-    $destination = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles/' . $newFilename;
+    $destination = $uploadDir . $newFilename;
     if (move_uploaded_file($file['tmp_name'], $destination)) {
         return '/uploads/profiles/' . $newFilename;
     }
