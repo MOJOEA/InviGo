@@ -9,6 +9,24 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? sanitize($title) . ' - ' : '' ?>InviGo</title>
+    
+    <!-- Favicon - Ticket Icon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='3' y='6' width='18' height='12' rx='2' fill='%23FFE600' stroke='black' stroke-width='2'/><path d='M9 6v12M15 6v12' stroke='black' stroke-width='2'/><circle cx='12' cy='10' r='1' fill='black'/><circle cx='12' cy='14' r='1' fill='black'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='3' y='6' width='18' height='12' rx='2' fill='%23FFE600' stroke='black' stroke-width='2'/><path d='M9 6v12M15 6v12' stroke='black' stroke-width='2'/><circle cx='12' cy='10' r='1' fill='black'/><circle cx='12' cy='14' r='1' fill='black'/></svg>">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="InviGo - ระบบจัดการลงทะเบียนกิจกรรมแบบ Neo-brutalism สร้างกิจกรรม จัดการผู้เข้าร่วม OTP เช็คอิน">
+    <meta name="keywords" content="กิจกรรม, ลงทะเบียน, event, registration, check-in, OTP">
+    <meta name="author" content="InviGo">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="InviGo - ระบบจัดการลงทะเบียนกิจกรรม">
+    <meta property="og:description" content="สร้างและจัดการกิจกรรม พร้อมระบบ OTP เช็คอิน">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="InviGo">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <style>
