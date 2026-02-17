@@ -30,7 +30,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <style>
-        /* Neo Brutalist Background Animations */
+      
         @keyframes float {
             0% { transform: translate(0px, 0px) rotate(0deg); }
             33% { transform: translate(20px, -40px) rotate(5deg); }
@@ -188,10 +188,42 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         .age-display.invalid {
             color: #ef4444;
         }
+        /* Mouse Effects */
+        .cursor-glow {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid black;
+            background: rgba(255, 230, 0, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, width 0.2s, height 0.2s;
+        }
+        .cursor-glow.hover {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 148, 194, 0.4);
+        }
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #FFE600;
+            border: 1px solid black;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%);
+        }
+        .magnetic-hover {
+            transition: transform 0.2s;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 bg-dot-pattern relative overflow-x-hidden">
-    <!-- Background Floating Shapes -->
+
     <div id="background-elements" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index: -1;">
         <div class="floating-shape animate-float top-[10%] right-[10%] w-16 h-16 md:w-20 md:h-20 text-[#FFE600]">
             <svg viewBox="0 0 24 24" fill="currentColor" style="filter: drop-shadow(3px 3px 0px #000);">
@@ -275,3 +307,89 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 }, 3000);
             </script>
         <?php endif; ?>
+        <!-- Mouse Effects Script -->
+        <script>
+            // Create cursor glow
+            const cursorGlow = document.createElement('div');
+            cursorGlow.className = 'cursor-glow';
+            document.body.appendChild(cursorGlow);
+            
+            // Create trail particles
+            const trails = [];
+            const maxTrails = 8;
+            for (let i = 0; i < maxTrails; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.opacity = (i / maxTrails) * 0.6;
+                document.body.appendChild(trail);
+                trails.push({ el: trail, x: 0, y: 0 });
+            }
+            
+            let mouseX = 0, mouseY = 0;
+            let glowX = 0, glowY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            // Smooth cursor glow follow
+            function updateGlow() {
+                glowX += (mouseX - glowX) * 0.15;
+                glowY += (mouseY - glowY) * 0.15;
+                cursorGlow.style.left = glowX + 'px';
+                cursorGlow.style.top = glowY + 'px';
+                
+                // Update trails
+                trails.forEach((trail, index) => {
+                    const delay = (index + 1) * 0.05;
+                    trail.x += (mouseX - trail.x) * (0.3 - delay);
+                    trail.y += (mouseY - trail.y) * (0.3 - delay);
+                    trail.el.style.left = trail.x + 'px';
+                    trail.el.style.top = trail.y + 'px';
+                });
+                
+                requestAnimationFrame(updateGlow);
+            }
+            updateGlow();
+            
+            // Hover effect on interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, .neo-card, .neo-btn, .neo-btn-small');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursorGlow.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursorGlow.classList.remove('hover'));
+            });
+            
+            // Click ripple effect
+            document.addEventListener('click', (e) => {
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `
+                    position: fixed;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                    width: 10px;
+                    height: 10px;
+                    background: rgba(255, 230, 0, 0.6);
+                    border: 2px solid black;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9996;
+                    transform: translate(-50%, -50%) scale(1);
+                    animation: rippleExpand 0.6s ease-out forwards;
+                `;
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+            
+            // Add ripple animation keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes rippleExpand {
+                    to {
+                        transform: translate(-50%, -50%) scale(8);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        </script>
