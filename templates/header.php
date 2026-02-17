@@ -118,6 +118,46 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             background-color: #fee2e2;
             color: #dc2626;
         }
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #FFE600;
+            border-top-color: black;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid black;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #D4FF33;
+            transition: width 1s linear;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0">

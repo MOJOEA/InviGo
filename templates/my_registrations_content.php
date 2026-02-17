@@ -132,10 +132,13 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
             </div>
             
             <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6">
-                <p class="text-red-600 font-bold flex items-center justify-center gap-2">
+                <p class="text-red-600 font-bold flex items-center justify-center gap-2 mb-3">
                     <span class="material-symbols-outlined">timer</span>
                     <span>หมดอายุใน <span id="displayOtpCountdown" class="font-mono"></span></span>
                 </p>
+                <div class="progress-bar">
+                    <div id="otpProgressBar" class="progress-fill" style="width: 100%"></div>
+                </div>
             </div>
             
             <div class="text-sm text-gray-500 space-y-1 mb-6">
@@ -161,10 +164,13 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 // Countdown for display OTP modal
 <?php if ($otpData && isset($otpData['expires'])): ?>
 let displayOtpRemaining = <?= max(0, strtotime($otpData['expires']) - time()) ?>;
+const OTP_TOTAL_TIME = 1800;
 <?php else: ?>
 let displayOtpRemaining = 0;
+const OTP_TOTAL_TIME = 1800;
 <?php endif; ?>
 const displayOtpCountdownEl = document.getElementById('displayOtpCountdown');
+const otpProgressBar = document.getElementById('otpProgressBar');
 if (displayOtpCountdownEl) {
     if (displayOtpRemaining > 0) {
         const displayOtpTimer = setInterval(() => {
@@ -175,19 +181,29 @@ if (displayOtpCountdownEl) {
                 displayOtpCountdownEl.parentElement.classList.add('text-red-600');
                 const otpCodeEl = document.getElementById('displayOtpCode');
                 if (otpCodeEl) otpCodeEl.textContent = '------';
+                if (otpProgressBar) otpProgressBar.style.width = '0%';
             } else {
                 const mins = Math.floor(displayOtpRemaining / 60);
                 const secs = displayOtpRemaining % 60;
                 displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                if (otpProgressBar) {
+                    const percentage = (displayOtpRemaining / OTP_TOTAL_TIME) * 100;
+                    otpProgressBar.style.width = percentage + '%';
+                }
             }
         }, 1000);
         const mins = Math.floor(displayOtpRemaining / 60);
         const secs = displayOtpRemaining % 60;
         displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        if (otpProgressBar) {
+            const percentage = (displayOtpRemaining / OTP_TOTAL_TIME) * 100;
+            otpProgressBar.style.width = percentage + '%';
+        }
     } else {
         displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
         const otpCodeEl = document.getElementById('displayOtpCode');
         if (otpCodeEl) otpCodeEl.textContent = '------';
+        if (otpProgressBar) otpProgressBar.style.width = '0%';
     }
 }
 
