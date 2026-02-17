@@ -183,9 +183,9 @@ if (!$currentUser) {
                     <div class="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
                         <img src="https://api.dicebear.com/9.x/dylan/svg" alt="Guest" class="w-full h-full object-cover">
                     </div>
-                    <div class="flex-1 min-w-0 flex flex-col justify-center">
-                        <p class="text-sm font-black text-black leading-tight">เข้าสู่ระบบ</p>
-                        <p class="text-xs text-gray-600 leading-tight mt-0.5">เพื่อใช้งานเต็มรูปแบบ</p>
+                    <div class="flex-1 flex flex-col">
+                        <p class="text-sm font-black text-black">เข้าสู่ระบบ</p>
+                        <p class="text-xs text-gray-600 mt-1">เพื่อใช้งานเต็มรูปแบบ</p>
                     </div>
                     <span class="material-symbols-outlined text-gray-500">chevron_right</span>
                 </div>
