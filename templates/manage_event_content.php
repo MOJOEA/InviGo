@@ -125,13 +125,6 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
     <a href="/events/<?= $event['id'] ?>/edit" class="neo-btn-small bg-[#D4FF33] px-4 py-2 font-bold flex items-center gap-2 hover:bg-[#cbf531]">
         <span class="material-symbols-outlined">edit</span> แก้ไขกิจกรรม
     </a>
-    <form method="POST" action="/events/<?= $event['id'] ?>/delete" 
-          onsubmit="return confirm('ยืนยันการลบกิจกรรมนี้? การลบจะไม่สามารถกู้คืนได้')" 
-          class="inline">
-        <button type="submit" class="neo-btn-small bg-red-100 px-4 py-2 font-bold flex items-center gap-2 text-red-600 hover:bg-red-200">
-            <span class="material-symbols-outlined">delete</span> ลบกิจกรรม
-        </button>
-    </form>
 </div>
 <h3 class="font-black text-xl mb-4 flex items-center gap-2">
     <span class="material-symbols-outlined">group</span> รายชื่อผู้เข้าร่วม (<?= count($registrations) ?>)

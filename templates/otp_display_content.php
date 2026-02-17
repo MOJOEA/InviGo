@@ -15,7 +15,7 @@ $seconds = $remaining % 60;
             <span class="material-symbols-outlined text-5xl">qr_code</span>
         </div>
         <h1 class="text-2xl font-black mb-2">รหัส OTP ของคุณ</h1>
-        <p class="text-gray-500 font-bold mb-6"><?= sanitize($event['event_title']) ?></p>
+        <p class="text-gray-500 font-bold mb-6"><?= sanitize($event['title']) ?></p>
         <div class="bg-black text-white rounded-xl p-6 mb-6">
             <p class="text-sm text-gray-400 mb-2">รหัส 6 หลัก</p>
             <p class="text-5xl font-black tracking-widest font-mono"><?= $otp_code ?></p>
