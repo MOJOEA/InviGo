@@ -36,8 +36,25 @@
         </div>
         <h1 class="text-6xl font-black mb-2">401</h1>
         <p class="text-xl font-bold text-gray-600 mb-4">ต้องเข้าสู่ระบบ</p>
-        <p class="text-gray-400 mb-8">กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
-        <a href="/login" class="neo-btn inline-block bg-[#FFE600] px-8 py-3 font-black hover:bg-[#ffe100]">เข้าสู่ระบบ</a>
+        <p class="text-gray-400 mb-6">กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
+        <form method="POST" action="/login" class="space-y-4">
+            <div class="text-left">
+                <label class="font-bold text-sm ml-1">อีเมล</label>
+                <input type="email" name="email" required 
+                       class="w-full p-3 mt-1 border-2 border-black rounded-xl outline-none focus:bg-yellow-50" 
+                       placeholder="user@example.com">
+            </div>
+            <div class="text-left">
+                <label class="font-bold text-sm ml-1">รหัสผ่าน</label>
+                <input type="password" name="password" required 
+                       class="w-full p-3 mt-1 border-2 border-black rounded-xl outline-none focus:bg-yellow-50" 
+                       placeholder="••••••">
+            </div>
+            <button type="submit" class="neo-btn w-full bg-[#FFE600] py-3 font-black hover:bg-[#ffe100] mt-2">
+                เข้าสู่ระบบ
+            </button>
+        </form>
+        <p class="mt-4 text-sm text-gray-400">ยังไม่มีบัญชี? <a href="/register" class="text-black underline font-bold">สมัครสมาชิก</a></p>
     </div>
 </body>
 </html>
