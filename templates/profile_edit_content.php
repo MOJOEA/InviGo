@@ -19,16 +19,19 @@
     
     <form method="POST" action="/profile/edit" enctype="multipart/form-data" class="bg-white border-2 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_black]">
         <div class="flex flex-col items-center mb-6">
-            <div class="w-24 h-24 rounded-full border-4 border-black overflow-hidden mb-3 bg-white relative">
+            <div class="w-24 h-24 rounded-full border-4 border-black overflow-hidden mb-3 bg-white relative cursor-pointer group" onclick="document.getElementById('profile-input').click()">
                 <img id="preview-image" src="<?= sanitize($user['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
                      alt="Profile" 
-                     class="w-full h-full object-cover">
+                     class="w-full h-full object-cover transition-all group-hover:brightness-75">
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-outlined text-3xl text-white drop-shadow-lg">photo_camera</span>
+                </div>
             </div>
             <label class="text-sm font-bold text-gray-500 mb-2">รูปโปรไฟล์</label>
-            <input type="file" name="profile_image" accept="image/*" 
-                   class="neo-input w-full p-2 text-sm"
+            <input type="file" id="profile-input" name="profile_image" accept="image/*" 
+                   class="hidden"
                    onchange="previewFile()">
-            <p class="text-xs text-gray-400 mt-1">รองรับ JPG, PNG, GIF, WebP (สูงสุด 2MB)</p>
+            <p class="text-xs text-gray-400 mt-1">กดที่รูปเพื่อเปลี่ยนรูปโปรไฟล์ (JPG, PNG, GIF, WebP สูงสุด 2MB)</p>
         </div>
         
         <div class="mb-4">
