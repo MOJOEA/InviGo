@@ -222,5 +222,9 @@
             }
         });
     </script>
+    
+    <div class="text-center py-4 text-xs text-gray-400 border-t border-gray-200 mt-4">
+        © <?= date('Y') ?> InviGo - ระบบจัดการลงทะเบียนกิจกรรม
+    </div>
 </body>
 </html>
