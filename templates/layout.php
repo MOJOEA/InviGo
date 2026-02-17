@@ -93,8 +93,11 @@ if (!$currentUser) {
         .toast {
             position: fixed;
             bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: fit-content;
+            max-width: 90%;
             padding: 12px 24px;
             border-radius: 12px;
             border: 2px solid black;
@@ -102,13 +105,13 @@ if (!$currentUser) {
             font-weight: bold;
             z-index: 9999;
             opacity: 0;
+            transform: translateY(100px);
             transition: all 0.3s ease-out;
-            min-width: 300px;
             text-align: center;
         }
         .toast.show {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
         }
         .toast-success {
             background-color: #D4FF33;
