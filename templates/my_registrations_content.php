@@ -66,7 +66,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                     <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-200">
                         <?php if ($reg['status'] === 'approved' && !$reg['checked_in'] && !$isPast): ?>
                             <?php if ($reg['otp']): ?>
-                                <button onclick="showOtpModal('<?= $reg['otp'] ?>', '<?= date('H:i', strtotime($reg['otp_expires'] ?? '+30 minutes')) ?>')" 
+                                <button onclick="showOtpModal('<?= $reg['otp']['otp_code'] ?>', '<?= date('H:i', strtotime($reg['otp']['expires_at'])) ?>')" 
                                     class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
                                     <span class="material-symbols-outlined text-sm">check_circle</span>
                                     เช็คอิน
