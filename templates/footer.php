@@ -21,14 +21,25 @@
             deleteEventId = eventId;
             document.getElementById('deleteEventTitle').textContent = '"' + eventTitle + '" ใช่หรือไม่?';
             document.getElementById('deleteModal').classList.remove('hidden');
+            document.addEventListener('keydown', handleDeleteKeydown);
         }
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
             deleteEventId = null;
+            document.removeEventListener('keydown', handleDeleteKeydown);
         }
         function submitDelete() {
             if (deleteEventId) {
                 document.getElementById('delete-form-' + deleteEventId).submit();
+            }
+        }
+        function handleDeleteKeydown(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitDelete();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeDeleteModal();
             }
         }
     </script>

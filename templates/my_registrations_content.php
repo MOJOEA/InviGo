@@ -221,10 +221,22 @@ function showWithdrawModal(eventId, eventTitle) {
     document.getElementById('withdrawEventTitle').textContent = eventTitle;
     document.getElementById('withdrawConfirmLink').href = '/events/' + eventId + '/withdraw';
     document.getElementById('withdrawModal').classList.remove('hidden');
+    document.addEventListener('keydown', handleWithdrawKeydown);
 }
 
 function closeWithdrawModal() {
     document.getElementById('withdrawModal').classList.add('hidden');
+    document.removeEventListener('keydown', handleWithdrawKeydown);
+}
+
+function handleWithdrawKeydown(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('withdrawConfirmLink').click();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeWithdrawModal();
+    }
 }
 
 // Close modal when clicking outside
@@ -238,10 +250,19 @@ function showOtpModal(otp, expires) {
     document.getElementById('otpCode').textContent = otp;
     document.getElementById('otpExpires').textContent = expires;
     document.getElementById('otpModal').classList.remove('hidden');
+    document.addEventListener('keydown', handleOtpKeydown);
 }
 
 function closeOtpModal() {
     document.getElementById('otpModal').classList.add('hidden');
+    document.removeEventListener('keydown', handleOtpKeydown);
+}
+
+function handleOtpKeydown(e) {
+    if (e.key === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        closeOtpModal();
+    }
 }
 
 // Close modal when clicking outside
