@@ -24,7 +24,6 @@ invalidateOtps($registration['id']);
 $otpCode = generateOTP(6);
 $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
 if (createOtp($registration['id'], $otpCode, $expiresAt)) {
-    // Store OTP data in session and redirect to my-registrations
     $_SESSION['otp_data'] = [
         'code' => $otpCode,
         'expires' => $expiresAt,
