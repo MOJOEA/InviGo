@@ -33,7 +33,10 @@ if (!$currentUser) {
         .floating-shape {
             position: absolute;
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
+        }
+        #background-elements {
+            z-index: -1;
         }
         .bg-dot-pattern {
             background-color: #FFFBF0;
@@ -150,7 +153,7 @@ if (!$currentUser) {
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 bg-dot-pattern relative overflow-x-hidden">
     <!-- Background Floating Shapes -->
-    <div id="background-elements" class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div id="background-elements" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index: -1;">
         <div class="floating-shape animate-float top-[10%] right-[10%] w-16 h-16 md:w-20 md:h-20 text-[#FFE600]">
             <svg viewBox="0 0 24 24" fill="currentColor" style="filter: drop-shadow(3px 3px 0px #000);">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
