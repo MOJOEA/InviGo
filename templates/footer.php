@@ -67,60 +67,20 @@
         <?php endif; ?>
     </nav>
 
-    <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-[8px_8px_0px_0px_black]">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-[#FFE600] border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="material-symbols-outlined text-3xl">school</span>
-                </div>
-                <h3 class="text-xl font-black mb-2">ยินดีต้อนรับสู่ InviGo!</h3>
-                <p class="text-gray-500 text-sm">ระบบจัดการลงทะเบียนกิจกรรม</p>
+    <div id="tutorialOverlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden">
+        <div id="tutorialHighlight" class="absolute border-4 border-[#FFE600] rounded-xl shadow-[0_0_20px_rgba(255,230,0,0.5)] transition-all duration-300 pointer-events-none"></div>
+        
+        <div id="tutorialTooltip" class="absolute bg-white border-2 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_black] max-w-xs w-full transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold bg-[#FFE600] px-2 py-1 rounded border border-black" id="tutorialStep">1/4</span>
+                <button onclick="skipTutorial()" class="text-gray-400 hover:text-black">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
             </div>
-            
-            <div class="space-y-4 mb-6">
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border-2 border-black">
-                    <div class="w-10 h-10 bg-[#40E0D0] border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined">search</span>
-                    </div>
-                    <div>
-                        <p class="font-bold">ค้นหากิจกรรม</p>
-                        <p class="text-xs text-gray-500">ดูกิจกรรมที่น่าสนใจและลงทะเบียน</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border-2 border-black">
-                    <div class="w-10 h-10 bg-[#FFE600] border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined">calendar_month</span>
-                    </div>
-                    <div>
-                        <p class="font-bold">กิจกรรมของฉัน</p>
-                        <p class="text-xs text-gray-500">สร้างและจัดการกิจกรรมของคุณ</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border-2 border-black">
-                    <div class="w-10 h-10 bg-[#D4FF33] border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined">confirmation_number</span>
-                    </div>
-                    <div>
-                        <p class="font-bold">การลงทะเบียน</p>
-                        <p class="text-xs text-gray-500">ดูสถานะการเข้าร่วมกิจกรรม</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border-2 border-black">
-                    <div class="w-10 h-10 bg-white border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined">person</span>
-                    </div>
-                    <div>
-                        <p class="font-bold">โปรไฟล์</p>
-                        <p class="text-xs text-gray-500">แก้ไขข้อมูลและการตั้งค่า</p>
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="closeTutorial()" class="neo-btn w-full bg-[#FFE600] py-3 font-bold">
-                เข้าใจแล้ว เริ่มใช้งาน!
+            <p class="font-bold mb-2" id="tutorialTitle">ค้นหากิจกรรม</p>
+            <p class="text-sm text-gray-500 mb-4" id="tutorialDesc">ค้นหากิจกรรมที่น่าสนใจและลงทะเบียนเข้าร่วมได้ที่นี่</p>
+            <button onclick="nextTutorialStep()" class="neo-btn w-full bg-[#FFE600] py-2 font-bold text-sm">
+                ถัดไป
             </button>
         </div>
     </div>
@@ -138,17 +98,102 @@
             document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
         }
 
-        function closeTutorial() {
-            setCookie('tutorialSeen', 'true', 365);
-            document.getElementById('tutorialModal').classList.add('hidden');
-        }
-
+        const tutorialSteps = [
+            {
+                selector: 'a[href="/explore"]',
+                title: 'ค้นหากิจกรรม',
+                desc: 'ค้นหากิจกรรมที่น่าสนใจและลงทะเบียนเข้าร่วม',
+                placement: 'bottom'
+            },
+            {
+                selector: 'a[href="/my-events"]',
+                title: 'กิจกรรมของฉัน',
+                desc: 'สร้างและจัดการกิจกรรมของคุณ',
+                placement: 'bottom'
+            },
+            {
+                selector: 'a[href="/my-registrations"]',
+                title: 'การลงทะเบียน',
+                desc: 'ดูสถานะการเข้าร่วมกิจกรรม',
+                placement: 'bottom'
+            },
+            {
+                selector: 'a[href="/profile"]',
+                title: 'โปรไฟล์',
+                desc: 'แก้ไขข้อมูลส่วนตัวและการตั้งค่า',
+                placement: 'bottom'
+            }
+        ];
+        
+        let currentStep = 0;
+        
         function showTutorial() {
-            document.getElementById('tutorialModal').classList.remove('hidden');
+            currentStep = 0;
+            document.getElementById('tutorialOverlay').classList.remove('hidden');
+            updateTutorialStep();
+        }
+        
+        function nextTutorialStep() {
+            currentStep++;
+            if (currentStep >= tutorialSteps.length) {
+                skipTutorial();
+                return;
+            }
+            updateTutorialStep();
+        }
+        
+        function updateTutorialStep() {
+            const step = tutorialSteps[currentStep];
+            const element = document.querySelector(step.selector);
+            
+            if (!element) {
+                skipTutorial();
+                return;
+            }
+            
+            const rect = element.getBoundingClientRect();
+            const highlight = document.getElementById('tutorialHighlight');
+            const tooltip = document.getElementById('tutorialTooltip');
+            
+            highlight.style.left = (rect.left - 8) + 'px';
+            highlight.style.top = (rect.top - 8) + 'px';
+            highlight.style.width = (rect.width + 16) + 'px';
+            highlight.style.height = (rect.height + 16) + 'px';
+            
+            document.getElementById('tutorialStep').textContent = (currentStep + 1) + '/' + tutorialSteps.length;
+            document.getElementById('tutorialTitle').textContent = step.title;
+            document.getElementById('tutorialDesc').textContent = step.desc;
+            
+            const btnText = currentStep === tutorialSteps.length - 1 ? 'เสร็จสิ้น' : 'ถัดไป';
+            document.querySelector('#tutorialTooltip button').textContent = btnText;
+            
+            let tooltipTop = rect.bottom + 20;
+            let tooltipLeft = rect.left;
+            
+            if (window.innerWidth <= 768) {
+                tooltipLeft = 20;
+                tooltip.style.maxWidth = (window.innerWidth - 40) + 'px';
+            } else {
+                tooltipLeft = Math.min(rect.left, window.innerWidth - 340);
+            }
+            
+            if (tooltipTop + 200 > window.innerHeight) {
+                tooltipTop = rect.top - 220;
+            }
+            
+            tooltip.style.left = tooltipLeft + 'px';
+            tooltip.style.top = tooltipTop + 'px';
+            
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function skipTutorial() {
+            setCookie('tutorialSeen', 'true', 365);
+            document.getElementById('tutorialOverlay').classList.add('hidden');
         }
 
         if (getCookie('tutorialSeen') !== 'true') {
-            setTimeout(showTutorial, 500);
+            setTimeout(showTutorial, 1000);
         }
 
         const clickSound = new Audio('/sfx/click4_11.wav');
