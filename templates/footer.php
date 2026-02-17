@@ -151,11 +151,8 @@
                 return;
             }
             
-            document.querySelectorAll('.nav-item, nav a').forEach(el => el.classList.remove('tutorial-active'));
-            element.classList.add('tutorial-active');
-            element.style.backgroundColor = '#FFE600';
-            element.style.color = 'black';
-            element.style.fontWeight = 'bold';
+            document.querySelectorAll('.nav-item, nav a').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
             
             const rect = element.getBoundingClientRect();
             const highlight = document.getElementById('tutorialHighlight');
@@ -194,12 +191,7 @@
         }
         
         function skipTutorial() {
-            document.querySelectorAll('.nav-item, nav a').forEach(el => {
-                el.classList.remove('tutorial-active');
-                el.style.backgroundColor = '';
-                el.style.color = '';
-                el.style.fontWeight = '';
-            });
+            document.querySelectorAll('.nav-item, nav a').forEach(el => el.classList.remove('active'));
             setCookie('tutorialSeen', 'true', 365);
             document.getElementById('tutorialOverlay').classList.add('hidden');
         }
