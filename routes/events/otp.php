@@ -24,14 +24,17 @@ invalidateOtps($registration['id']);
 $otpCode = generateOTP(6);
 $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
 if (createOtp($registration['id'], $otpCode, $expiresAt)) {
-    $title = 'รหัส OTP เข้างาน';
-    $activePage = 'my-registrations';
-    renderView('otp_display_content', [
-        'otp_code' => $otpCode,
-        'expires_at' => $expiresAt,
-        'event' => array_merge($registration, $event),
-        'activePage' => $activePage
-    ]);
+    // Store OTP data in session and redirect to my-registrations
+    $_SESSION['otp_data'] = [
+        'code' => $otpCode,
+        'expires' => $expiresAt,
+        'event_title' => $event['title'],
+        'event_date' => $event['event_date'],
+        'location' => $event['location'],
+        'organizer_name' => $event['organizer_name']
+    ];
+    header('Location: /my-registrations?show_otp=1');
+    exit;
 } else {
     setFlashMessage('error', 'เกิดข้อผิดพลาดในการสร้าง OTP');
     header('Location: /my-registrations');

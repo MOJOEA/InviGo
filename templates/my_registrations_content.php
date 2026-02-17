@@ -115,7 +115,89 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
     </div>
 </div>
 
-<!-- OTP Modal -->
+<!-- Full OTP Display Modal -->
+<?php if ($otpData): ?>
+<div id="otpDisplayModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-[8px_8px_0px_0px_black]">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-[#FFE600] border-2 border-black rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <span class="material-symbols-outlined text-5xl">qr_code</span>
+            </div>
+            <h3 class="text-xl font-black mb-2">รหัส OTP ของคุณ</h3>
+            <p class="text-gray-500 font-bold mb-6"><?= sanitize($otpData['event_title']) ?></p>
+            
+            <div class="bg-black text-white rounded-xl p-6 mb-6">
+                <p class="text-sm text-gray-400 mb-2">รหัส 6 หลัก</p>
+                <p id="displayOtpCode" class="text-5xl font-black tracking-widest font-mono"><?= $otpData['code'] ?></p>
+            </div>
+            
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6">
+                <p class="text-red-600 font-bold flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">timer</span>
+                    <span>หมดอายุใน <span id="displayOtpCountdown" class="font-mono"></span></span>
+                </p>
+            </div>
+            
+            <div class="text-sm text-gray-500 space-y-1 mb-6">
+                <p><span class="font-bold">วันที่:</span> <?= formatThaiDateTime($otpData['event_date']) ?></p>
+                <p><span class="font-bold">สถานที่:</span> <?= sanitize($otpData['location']) ?></p>
+            </div>
+            
+            <div class="p-4 bg-yellow-50 rounded-xl border-2 border-yellow-300 mb-6">
+                <p class="text-sm font-bold text-yellow-800">
+                    <span class="material-symbols-outlined inline-block mr-1">info</span>
+                    แสดงรหัสนี้ให้ผู้จัดงานเพื่อเช็คชื่อเข้างาน
+                </p>
+            </div>
+            
+            <button onclick="closeOtpDisplayModal()" class="neo-btn bg-gray-200 px-6 py-3 font-bold w-full">
+                ปิด
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Countdown for display OTP modal
+let displayOtpRemaining = <?= strtotime($otpData['expires']) - time() ?>;
+const displayOtpCountdownEl = document.getElementById('displayOtpCountdown');
+if (displayOtpRemaining > 0) {
+    const displayOtpTimer = setInterval(() => {
+        displayOtpRemaining--;
+        if (displayOtpRemaining <= 0) {
+            clearInterval(displayOtpTimer);
+            displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
+            displayOtpCountdownEl.parentElement.classList.add('text-red-600');
+            document.getElementById('displayOtpCode').textContent = '------';
+        } else {
+            const mins = Math.floor(displayOtpRemaining / 60);
+            const secs = displayOtpRemaining % 60;
+            displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
+    }, 1000);
+    // Initial display
+    const mins = Math.floor(displayOtpRemaining / 60);
+    const secs = displayOtpRemaining % 60;
+    displayOtpCountdownEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+} else {
+    displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
+    document.getElementById('displayOtpCode').textContent = '------';
+}
+
+function closeOtpDisplayModal() {
+    document.getElementById('otpDisplayModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('otpDisplayModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeOtpDisplayModal();
+    }
+});
+</script>
+<?php endif; ?>
+
+<!-- Quick OTP Modal (for check-in button) -->
 <div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
         <div class="text-center">

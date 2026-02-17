@@ -10,4 +10,13 @@ foreach ($registrations as &$reg) {
 unset($reg);
 $title = 'การลงทะเบียนของฉัน';
 $activePage = 'my-registrations';
-renderView('my_registrations_content', ['registrations' => $registrations, 'activePage' => $activePage]);
+$otpData = $_SESSION['otp_data'] ?? null;
+if ($otpData) {
+    unset($_SESSION['otp_data']);
+}
+renderView('my_registrations_content', [
+    'registrations' => $registrations,
+    'activePage' => $activePage,
+    'otpData' => $otpData,
+    'showOtp' => isset($_GET['show_otp'])
+]);
