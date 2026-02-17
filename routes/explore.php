@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-requireAuth();
-$userId = getCurrentUserId();
+$userId = getCurrentUserId() ?? 0;
 $search = trim($_GET['search'] ?? '');
 $startDate = $_GET['start_date'] ?? '';
 $endDate = $_GET['end_date'] ?? '';
@@ -15,7 +14,7 @@ foreach ($events as &$event) {
     $event['image'] = getFirstEventImage($event['id']);
     $event['approved_count'] = getEventApprovedCount($event['id']);
     $event['is_owner'] = ($event['user_id'] == $userId);
-    if (!$event['is_owner']) {
+    if ($userId > 0 && !$event['is_owner']) {
         $reg = getRegistrationByUserAndEvent($userId, $event['id']);
         $event['user_registration_status'] = $reg ? 1 : 0;
         $event['registration_status'] = $reg['status'] ?? null;

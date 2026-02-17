@@ -1,6 +1,7 @@
 <?php
 $flash = getFlashMessage();
 $currentUser = getCurrentUser();
+$isLoggedIn = !empty($currentUser);
 if (!$currentUser) {
     $currentUser = ['name' => 'Guest', 'email' => '', 'profile_image' => 'https://api.dicebear.com/9.x/dylan/svg'];
 }
@@ -134,6 +135,7 @@ if (!$currentUser) {
             <a href="/explore" class="nav-item <?= ($activePage ?? '') === 'explore' ? 'active' : '' ?>">
                 <span class="material-symbols-outlined">search</span> ค้นหา
             </a>
+            <?php if ($isLoggedIn): ?>
             <a href="/my-events" class="nav-item <?= ($activePage ?? '') === 'my-events' ? 'active' : '' ?>">
                 <span class="material-symbols-outlined">calendar_month</span> กิจกรรมของฉัน
             </a>
@@ -143,8 +145,20 @@ if (!$currentUser) {
             <a href="/profile" class="nav-item <?= ($activePage ?? '') === 'profile' ? 'active' : '' ?>">
                 <span class="material-symbols-outlined">person</span> โปรไฟล์
             </a>
+            <?php else: ?>
+            <div class="nav-item opacity-50 cursor-not-allowed" title="กรุณาเข้าสู่ระบบ">
+                <span class="material-symbols-outlined">calendar_month</span> กิจกรรมของฉัน
+            </div>
+            <div class="nav-item opacity-50 cursor-not-allowed" title="กรุณาเข้าสู่ระบบ">
+                <span class="material-symbols-outlined">confirmation_number</span> การลงทะเบียน
+            </div>
+            <div class="nav-item opacity-50 cursor-not-allowed" title="กรุณาเข้าสู่ระบบ">
+                <span class="material-symbols-outlined">person</span> โปรไฟล์
+            </div>
+            <?php endif; ?>
         </nav>
         <div class="mt-auto">
+            <?php if ($isLoggedIn): ?>
             <a href="/profile" class="block mb-4 p-3 bg-white rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black] hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
@@ -163,6 +177,20 @@ if (!$currentUser) {
             <a href="/logout" class="flex items-center gap-2 text-red-500 font-bold p-2 hover:bg-red-50 rounded-lg">
                 <span class="material-symbols-outlined">logout</span> ออกจากระบบ
             </a>
+            <?php else: ?>
+            <a href="/login" class="block mb-4 p-3 bg-[#FFE600] rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_black] hover:shadow-[1px_1px_0px_0px_black] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
+                        <img src="https://api.dicebear.com/9.x/dylan/svg" alt="Guest" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-black truncate">เข้าสู่ระบบ</p>
+                        <p class="text-xs text-gray-500 truncate">เพื่อใช้งานเต็มรูปแบบ</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-400">login</span>
+                </div>
+            </a>
+            <?php endif; ?>
         </div>
     </aside>
     <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">

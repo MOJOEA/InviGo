@@ -88,6 +88,10 @@ $userId = getCurrentUserId();
                             <span class="text-xs font-bold px-2 py-1 bg-red-100 text-red-600 rounded border border-black">เต็มแล้ว</span>
                         <?php elseif ($isPast): ?>
                             <span class="text-xs font-bold px-2 py-1 bg-gray-100 text-gray-500 rounded border border-black">สิ้นสุดแล้ว</span>
+                        <?php elseif ($userId === 0): ?>
+                            <a href="/login" class="neo-btn-small bg-gray-200 text-gray-600 px-4 py-1 text-sm font-bold hover:bg-gray-300 inline-flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">login</span> เข้าสู่ระบบเพื่อเข้าร่วม
+                            </a>
                         <?php else: ?>
                             <a href="/events/<?= $event['id'] ?>" class="neo-btn-small bg-[#40E0D0] px-4 py-1 text-sm font-bold hover:bg-[#3dd1c2] inline-flex items-center gap-1">
                                 เข้าร่วม <span class="material-symbols-outlined text-sm">arrow_forward</span>
