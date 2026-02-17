@@ -57,6 +57,34 @@
             transform: translate(1px, 1px);
             box-shadow: 2px 2px 0 0 black;
         }
+        /* Debug Tooltip - Always Visible */
+        .debug-btn::before {
+            content: "Debug Mode - คลิกเลือกผู้ใช้ทดสอบ";
+            position: absolute;
+            top: 50%;
+            right: 50px;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: none;
+        }
+        .debug-btn::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 44px;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: #333;
+            opacity: 1;
+            visibility: visible;
+        }
         .debug-modal {
             display: none;
             position: fixed;
@@ -117,10 +145,10 @@
                     <span class="material-symbols-outlined text-lg">close</span>
                 </button>
             </div>
-            <p class="text-xs text-gray-400 mb-3">Quick login for testing:</p>
+         
             <button class="debug-user-btn" onclick="fillLogin('organizer@test.com', 'password')">
                 <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                   <span class="material-symbols-outlined">person</span>
                     <div>
                         <div class="font-bold">ผู้ใช้ 1</div>
                         <div class="text-xs text-gray-500">organizer@test.com</div>
