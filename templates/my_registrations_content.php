@@ -2,13 +2,13 @@
 <?php
 function getStatusBadge(string $status, bool $checkedIn = false): string {
     if ($status === 'approved' && $checkedIn) {
-        return '<span class="bg-blue-100 text-blue-700 border-blue-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check_circle</span> เช็คชื่อแล้ว</span>';
+        return '<span class="bg-blue-500 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check_circle</span> เช็คชื่อแล้ว</span>';
     }
     return match($status) {
-        'pending' => '<span class="bg-yellow-100 text-yellow-700 border-yellow-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> รออนุมัติ</span>',
-        'approved' => '<span class="bg-green-100 text-green-700 border-green-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">check</span> อนุมัติแล้ว</span>',
-        'rejected' => '<span class="bg-red-100 text-red-700 border-red-500 px-2 py-1 rounded border text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>',
-        default => '<span class="bg-gray-100 px-2 py-1 rounded border text-xs font-bold">' . $status . '</span>'
+        'pending' => '<span class="bg-yellow-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">schedule</span> รออนุมัติ</span>',
+        'approved' => '<span class="bg-green-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check</span> อนุมัติแล้ว</span>',
+        'rejected' => '<span class="bg-red-400 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>',
+        default => '<span class="bg-gray-200 text-gray-700 border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black">' . $status . '</span>'
     };
 }
 ?>
@@ -32,7 +32,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
             $isPast = $eventDate < $now;
             $isFull = $reg['approved_count'] >= $reg['max_participants'];
         ?>
-            <div class="neo-box p-4 flex flex-col md:flex-row gap-4">
+            <div class="neo-box p-4 flex flex-col md:flex-row gap-4 relative">
                 <a href="/events/<?= $reg['event_id'] ?>" class="w-full md:w-32 h-24 bg-gray-200 rounded-lg border-2 border-black overflow-hidden flex-shrink-0 block">
                     <?php if ($reg['image']): ?>
                         <img src="<?= sanitize($reg['image']) ?>" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x200'">
@@ -42,47 +42,51 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                         </div>
                     <?php endif; ?>
                 </a>
-                <div class="flex-1">
+                <div class="flex-1 flex flex-col">
                     <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
-                        <a href="/events/<?= $reg['event_id'] ?>" class="font-black text-lg hover:text-[#40E0D0]"><?= sanitize($reg['title']) ?></a>
-                        <?= getStatusBadge($reg['status'], $reg['checked_in']) ?>
+                        <a href="/events/<?= $reg['event_id'] ?>" class="font-black text-lg hover:text-[#40E0D0] leading-tight"><?= sanitize($reg['title']) ?></a>
+                        <div class="flex-shrink-0">
+                            <?= getStatusBadge($reg['status'], $reg['checked_in']) ?>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-500 mb-2">
-                        <span class="material-symbols-outlined text-sm inline">calendar_month</span>
-                        <?= formatThaiDateTime($reg['event_date']) ?>
-                    </p>
-                    <p class="text-sm text-gray-500 mb-2">
-                        <span class="material-symbols-outlined text-sm inline">location_on</span>
-                        <?= sanitize($reg['location']) ?>
-                    </p>
-                    <p class="text-xs text-gray-400">
-                        ผู้จัด: <?= sanitize($reg['organizer_name']) ?> • 
-                        ลงทะเบียนเมื่อ <?= date('d/m/Y', strtotime($reg['created_at'])) ?>
-                    </p>
-                </div>
-                <div class="flex flex-row md:flex-col gap-2 justify-end">
-                    <?php if ($reg['status'] === 'approved' && !$reg['checked_in'] && !$isPast): ?>
-                        <?php if ($reg['otp']): ?>
-                            <button onclick="showOtpModal('<?= $reg['otp'] ?>', '<?= date('H:i', strtotime($reg['otp_expires'] ?? '+30 minutes')) ?>')" 
-                                class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">check_circle</span>
-                                เช็คอิน
-                            </button>
-                        <?php else: ?>
-                            <a href="/events/<?= $reg['event_id'] ?>/otp" class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">qr_code</span>
-                                ขอ OTP
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-500 mb-1">
+                            <span class="material-symbols-outlined text-sm inline">calendar_month</span>
+                            <?= formatThaiDateTime($reg['event_date']) ?>
+                        </p>
+                        <p class="text-sm text-gray-500 mb-1">
+                            <span class="material-symbols-outlined text-sm inline">location_on</span>
+                            <?= sanitize($reg['location']) ?>
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            ผู้จัด: <?= sanitize($reg['organizer_name']) ?> • 
+                            ลงทะเบียนเมื่อ <?= date('d/m/Y', strtotime($reg['created_at'])) ?>
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-200">
+                        <?php if ($reg['status'] === 'approved' && !$reg['checked_in'] && !$isPast): ?>
+                            <?php if ($reg['otp']): ?>
+                                <button onclick="showOtpModal('<?= $reg['otp'] ?>', '<?= date('H:i', strtotime($reg['otp_expires'] ?? '+30 minutes')) ?>')" 
+                                    class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                                    เช็คอิน
+                                </button>
+                            <?php else: ?>
+                                <a href="/events/<?= $reg['event_id'] ?>/otp" class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">qr_code</span>
+                                    ขอ OTP
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if (!$reg['checked_in'] && !$isPast): ?>
+                            <a href="/events/<?= $reg['event_id'] ?>/withdraw" 
+                                onclick="return confirm('ยืนยันการยกเลิกการลงทะเบียน?')"
+                                class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 text-sm font-bold inline-flex items-center gap-1 hover:bg-red-200">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                                ยกเลิก
                             </a>
                         <?php endif; ?>
-                    <?php endif; ?>
-                    <?php if (!$reg['checked_in'] && !$isPast): ?>
-                        <a href="/events/<?= $reg['event_id'] ?>/withdraw" 
-                            onclick="return confirm('ยืนยันการยกเลิกการลงทะเบียน?')"
-                            class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 text-sm font-bold inline-flex items-center gap-1 hover:bg-red-200">
-                            <span class="material-symbols-outlined text-sm">close</span>
-                            ยกเลิก
-                        </a>
-                    <?php endif; ?>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
