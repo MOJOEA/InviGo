@@ -16,6 +16,13 @@
     </div>
 <?php else: ?>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Add New Event Card -->
+        <a href="/events/create" class="neo-card bg-white rounded-2xl border-2 border-black overflow-hidden opacity-50 border-dashed hover:opacity-80 transition-opacity">
+            <div class="h-full flex flex-col items-center justify-center p-10 text-gray-400 gap-4 min-h-[300px]">
+                <span class="material-symbols-outlined text-6xl">add_circle</span>
+                <span class="font-black text-lg">เพิ่มกิจกรรมใหม่</span>
+            </div>
+        </a>
         <?php foreach ($events as $event): 
             $now = new DateTime();
             $endDateStr = $event['end_date'] ?? $event['event_date'];
