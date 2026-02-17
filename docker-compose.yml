@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: invigo-php
+    ports:
+      - "8888:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - invigo-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: invigo-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: InviGo
+      MYSQL_USER: InviGo
+      MYSQL_PASSWORD: InviGo
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - invigo-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: invigo-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8889:80"
+    depends_on:
+      - mysql
+    networks:
+      - invigo-network
+
+volumes:
+  mysql_data:
+
+
+networks:
+  invigo-network:
+    driver: bridge

@@ -1,0 +1,17 @@
+<?php
+function hashPassword(string $password): string
+{
+    return password_hash($password, PASSWORD_BCRYPT);
+}
+function verifyPassword(string $password, string $hash): bool
+{
+    return password_verify($password, $hash);
+}
+function generateOTP(int $length = 6): string
+{
+    $otp = '';
+    for ($i = 0; $i < $length; $i++) {
+        $otp .= random_int(0, 9);
+    }
+    return $otp;
+}
