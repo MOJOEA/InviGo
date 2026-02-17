@@ -206,6 +206,10 @@ if (!$currentUser) {
                 </div>
             </div>
             <script>
+                const toastSound = new Audio('/sfx/click3_3.wav');
+                toastSound.volume = 0.3;
+                toastSound.play().catch(() => {});
+                
                 setTimeout(() => {
                     document.getElementById('toast').classList.add('show');
                 }, 100);
