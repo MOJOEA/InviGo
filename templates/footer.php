@@ -151,6 +151,12 @@
                 return;
             }
             
+            document.querySelectorAll('.nav-item, nav a').forEach(el => el.classList.remove('tutorial-active'));
+            element.classList.add('tutorial-active');
+            element.style.backgroundColor = '#FFE600';
+            element.style.color = 'black';
+            element.style.fontWeight = 'bold';
+            
             const rect = element.getBoundingClientRect();
             const highlight = document.getElementById('tutorialHighlight');
             const tooltip = document.getElementById('tutorialTooltip');
@@ -188,6 +194,12 @@
         }
         
         function skipTutorial() {
+            document.querySelectorAll('.nav-item, nav a').forEach(el => {
+                el.classList.remove('tutorial-active');
+                el.style.backgroundColor = '';
+                el.style.color = '';
+                el.style.fontWeight = '';
+            });
             setCookie('tutorialSeen', 'true', 365);
             document.getElementById('tutorialOverlay').classList.add('hidden');
         }
