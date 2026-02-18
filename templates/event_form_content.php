@@ -9,6 +9,12 @@ $existingImages = $images ?? [];
         <span class="material-symbols-outlined">arrow_back</span>
     </a>
     <h1 class="text-2xl font-black"><?= $isEdit ? 'แก้ไขกิจกรรม' : 'สร้างกิจกรรมใหม่' ?></h1>
+    <?php if (!$isEdit): ?>
+        <span id="draftStatus" class="text-sm text-gray-400 ml-auto opacity-0 transition-opacity"></span>
+        <button type="button" id="loadDraftBtn" onclick="loadDraft()" class="text-sm text-blue-600 hover:text-blue-800 font-bold hidden">
+            โหลดข้อมูลที่บันทึกไว้
+        </button>
+    <?php endif; ?>
 </div>
 <?php if (!empty($errors['general'])): ?>
     <div class="bg-red-100 border-2 border-red-500 text-red-700 p-3 rounded-lg mb-4 font-bold">
@@ -219,5 +225,84 @@ $existingImages = $images ?? [];
             }
         }
     });
+
+    // Auto-save draft functionality (only for create mode)
+    <?php if (!$isEdit): ?>
+    const DRAFT_KEY = 'invigo_event_draft';
+    const form = document.querySelector('form');
+    const draftStatus = document.getElementById('draftStatus');
+    const loadDraftBtn = document.getElementById('loadDraftBtn');
+    let saveTimeout;
+
+    // Check for existing draft on load
+    function checkDraft() {
+        const draft = localStorage.getItem(DRAFT_KEY);
+        if (draft) {
+            const data = JSON.parse(draft);
+            const hasData = data.title || data.description || data.location;
+            if (hasData) {
+                loadDraftBtn.classList.remove('hidden');
+            }
+        }
+    }
+
+    // Load draft data
+    window.loadDraft = function() {
+        const draft = localStorage.getItem(DRAFT_KEY);
+        if (!draft) return;
+        
+        const data = JSON.parse(draft);
+        if (data.title) form.querySelector('[name="title"]').value = data.title;
+        if (data.description) form.querySelector('[name="description"]').value = data.description;
+        if (data.event_date) form.querySelector('[name="event_date"]').value = data.event_date;
+        if (data.end_date) form.querySelector('[name="end_date"]').value = data.end_date;
+        if (data.location) form.querySelector('[name="location"]').value = data.location;
+        if (data.max_participants) form.querySelector('[name="max_participants"]').value = data.max_participants;
+        
+        showDraftStatus('โหลดข้อมูลแล้ว ✓', 'text-green-600');
+        loadDraftBtn.classList.add('hidden');
+    };
+
+    // Save draft
+    function saveDraft() {
+        const data = {
+            title: form.querySelector('[name="title"]').value,
+            description: form.querySelector('[name="description"]').value,
+            event_date: form.querySelector('[name="event_date"]').value,
+            end_date: form.querySelector('[name="end_date"]').value,
+            location: form.querySelector('[name="location"]').value,
+            max_participants: form.querySelector('[name="max_participants"]').value,
+            savedAt: new Date().toISOString()
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+        showDraftStatus('บันทึกอัตโนมัติ ✓', 'text-green-600');
+    }
+
+    // Show draft status
+    function showDraftStatus(text, colorClass) {
+        draftStatus.textContent = text;
+        draftStatus.className = `text-sm ml-auto transition-opacity ${colorClass}`;
+        draftStatus.style.opacity = '1';
+        setTimeout(() => {
+            draftStatus.style.opacity = '0';
+        }, 2000);
+    }
+
+    // Auto-save on input (debounced)
+    form.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveDraft, 1000);
+        });
+    });
+
+    // Clear draft on successful submit
+    form.addEventListener('submit', () => {
+        localStorage.removeItem(DRAFT_KEY);
+    });
+
+    // Check for draft on page load
+    checkDraft();
+    <?php endif; ?>
 </script>
 <?php include 'footer.php' ?>
