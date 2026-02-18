@@ -36,22 +36,80 @@ $isFull = $approvedCount >= $event['max_participants'];
 .clickable-image {
     cursor: zoom-in;
 }
+.large-date-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: #FFE600;
+    border: 3px solid black;
+    padding: 0.75rem 1.25rem;
+    transform: rotate(-2deg);
+    box-shadow: 4px 4px 0 0 black;
+    z-index: 10;
+}
+.large-date-badge .day {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+.large-date-badge .month {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.large-date-badge .year {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.cta-back-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+}
+.hero-container {
+    position: relative;
+}
 </style>
-<div class="mb-4">
-    <a href="/explore" class="inline-flex items-center gap-1 text-gray-500 hover:text-black font-bold">
-        <span class="material-symbols-outlined">arrow_back</span> กลับ
+<div class="hero-container mb-6">
+    <a href="/explore" class="cta-back-btn neo-btn bg-white w-12 h-12 flex items-center justify-center hover:bg-gray-100">
+        <span class="material-symbols-outlined text-2xl">arrow_back</span>
     </a>
-</div>
-<div class="neo-box overflow-hidden">
+    
     <?php if (!empty($images)): ?>
-        <div class="h-64 md:h-80 bg-gray-200">
+        <div class="h-64 md:h-80 bg-gray-200 rounded-xl border-3 border-black overflow-hidden">
+            <?php
+            $eventDate = new DateTime($event['event_date']);
+            $day = $eventDate->format('j');
+            $month = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'][$eventDate->format('n') - 1];
+            $year = $eventDate->format('Y') + 543;
+            ?>
+            <div class="large-date-badge rounded-lg">
+                <div class="day"><?= $day ?></div>
+                <div class="month"><?= $month ?></div>
+                <div class="year"><?= $year ?></div>
+            </div>
             <img src="<?= sanitize($images[0]['image_path']) ?>" class="w-full h-full object-cover clickable-image" onclick="openLightbox('<?= sanitize($images[0]['image_path']) ?>')">
         </div>
     <?php else: ?>
-        <div class="h-64 md:h-80 bg-gray-100 flex items-center justify-center">
+        <div class="h-64 md:h-80 bg-gray-100 flex items-center justify-center rounded-xl border-3 border-black relative">
+            <?php
+            $eventDate = new DateTime($event['event_date']);
+            $day = $eventDate->format('j');
+            $month = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'][$eventDate->format('n') - 1];
+            $year = $eventDate->format('Y') + 543;
+            ?>
+            <div class="large-date-badge rounded-lg">
+                <div class="day"><?= $day ?></div>
+                <div class="month"><?= $month ?></div>
+                <div class="year"><?= $year ?></div>
+            </div>
             <span class="material-symbols-outlined text-8xl text-gray-300">event</span>
         </div>
     <?php endif; ?>
+</div>
+
+<div class="neo-box overflow-hidden">
     <div class="p-6">
         <div class="flex flex-wrap gap-2 mb-3">
             <span class="bg-[#D4FF33] border-2 border-black px-3 py-1 text-sm font-bold rounded inline-flex items-center gap-1">
