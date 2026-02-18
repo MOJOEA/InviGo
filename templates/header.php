@@ -136,32 +136,59 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
         .toast {
             position: fixed;
-            bottom: 100px;
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%) translateY(100px);
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: 2px solid black;
-            box-shadow: 4px 4px 0 0 black;
-            font-weight: bold;
+            bottom: 30px;
+            right: 30px;
+            transform: translateY(200%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 9999;
-            opacity: 0;
-            transition: all 0.3s ease-out;
-            min-width: 300px;
-            max-width: 90%;
-            text-align: center;
-            margin: 0;
+            background: white;
+            border: 4px solid black;
+            box-shadow: 5px 5px 0 0 black;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            max-width: 400px;
+            width: 100%;
         }
         .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
         }
-        .toast-success {
-            background-color: #D4FF33;
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
-        .toast-error {
-            background-color: #fee2e2;
+        .toast-success .toast-icon {
+            background: #D4FF33;
+        }
+        .toast-error .toast-icon {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .toast-content {
+            flex-grow: 1;
+        }
+        .toast-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        .toast-message {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        .toast-close {
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 0 0.5rem;
+            cursor: pointer;
+        }
+        .toast-close:hover {
             color: #dc2626;
         }
         .gender-btn {
@@ -340,10 +367,14 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         </div>
         <?php if ($flash): ?>
             <div id="toast" class="toast toast-<?= $flash['type'] ?>">
-                <div class="flex items-center gap-2">
+                <div class="toast-icon">
                     <span class="material-symbols-outlined"><?= $flash['type'] === 'success' ? 'check_circle' : 'error' ?></span>
-                    <span><?= sanitize($flash['message']) ?></span>
                 </div>
+                <div class="toast-content">
+                    <div class="toast-title"><?= $flash['type'] === 'success' ? 'Success' : 'Error' ?></div>
+                    <div class="toast-message"><?= sanitize($flash['message']) ?></div>
+                </div>
+                <button onclick="document.getElementById('toast').classList.remove('show')" class="toast-close">X</button>
             </div>
             <script>
                 setTimeout(() => {
@@ -351,6 +382,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 }, 100);
                 setTimeout(() => {
                     document.getElementById('toast').classList.remove('show');
-                }, 3000);
+                }, 4000);
             </script>
         <?php endif; ?>
