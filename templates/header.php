@@ -294,9 +294,22 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 12px;
+            background: #facc15;
+            width: 0%;
+            z-index: 9999;
+            border-bottom: 3px solid black;
+            border-right: 3px solid black;
+            transition: width 0.1s ease-out;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 bg-dot-pattern relative overflow-x-hidden">
+    <div id="scroll-progress"></div>
 
     <div id="background-elements" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index: -1;">
         <div class="floating-shape animate-float top-[10%] right-[10%] w-16 h-16 md:w-20 md:h-20 text-[#FFE600]">

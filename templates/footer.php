@@ -225,6 +225,16 @@
                 clickSound.play().catch(() => {});
             }
         });
+
+        window.addEventListener('scroll', () => {
+            const scrollTotal = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollCurrent = document.documentElement.scrollTop;
+            const scrollPercentage = (scrollCurrent / scrollTotal) * 100;
+            const progressBar = document.getElementById('scroll-progress');
+            if (progressBar) {
+                progressBar.style.width = scrollPercentage + '%';
+            }
+        });
     </script>
 </body>
 </html>
