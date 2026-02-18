@@ -88,19 +88,36 @@
         }
         .picker-popup {
             display: none;
-            position: absolute;
-            top: 110%;
-            left: 0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
             width: 320px;
             background: white;
             border: 3px solid black;
             border-radius: 1rem;
             box-shadow: 8px 8px 0 0 black;
             padding: 1rem;
-            z-index: 50;
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .picker-popup.active { display: block; }
+        .picker-popup.active {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .picker-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+        }
+        .picker-overlay.active {
+            display: block;
+        }
         .picker-container {
             display: flex;
             height: 200px;
@@ -255,6 +272,7 @@
                         <span id="selected-date-text" class="text-gray-400">เลือกวันเกิด...</span>
                         <span class="material-symbols-outlined">cake</span>
                     </div>
+                    <div id="picker-overlay" class="picker-overlay" onclick="window.closePicker()"></div>
                     <div id="picker-popup" class="picker-popup" onclick="event.stopPropagation()">
                         <div class="flex gap-2 mb-1">
                             <div class="flex-1 col-label">วัน</div>
@@ -267,8 +285,8 @@
                             <div class="picker-col" id="col-years"></div>
                         </div>
                         <div class="pt-2 border-t-2 border-dashed border-gray-300 flex justify-between items-center">
-                            <button type="button" class="text-sm text-red-500 font-bold hover:underline" onclick="clearDate()">ล้าง</button>
-                            <button type="button" class="bg-black text-white px-4 py-2 rounded-lg font-bold border-2 border-black hover:bg-white hover:text-black transition-colors" onclick="confirmDate()">ตกลง</button>
+                            <button type="button" class="text-sm text-red-500 font-bold hover:underline" onclick="window.clearDate()">ล้าง</button>
+                            <button type="button" class="bg-black text-white px-4 py-2 rounded-lg font-bold border-2 border-black hover:bg-white hover:text-black transition-colors" onclick="window.confirmDate()">ตกลง</button>
                         </div>
                     </div>
                     <p id="ageDisplay" class="age-display"></p>
@@ -400,11 +418,13 @@
         function togglePicker(e) {
             e.stopPropagation();
             const popup = document.getElementById('picker-popup');
+            const overlay = document.getElementById('picker-overlay');
             const trigger = document.getElementById('date-trigger');
             if (popup.classList.contains('active')) {
                 window.closePicker();
             } else {
                 popup.classList.add('active');
+                overlay.classList.add('active');
                 trigger.classList.add('active');
                 initColumns();
             }
@@ -413,6 +433,7 @@
 
         function closePicker() {
             document.getElementById('picker-popup').classList.remove('active');
+            document.getElementById('picker-overlay').classList.remove('active');
             document.getElementById('date-trigger').classList.remove('active');
         }
         window.closePicker = closePicker;
