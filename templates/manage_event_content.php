@@ -151,7 +151,7 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
                 default => $reg['status']
             };
         ?>
-            <div class="neo-box p-3 flex justify-between items-center">
+            <div class="neo-box p-3 flex justify-between items-center" data-reg-id="<?= $reg['id'] ?>">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
                         <img src="<?= sanitize($reg['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
@@ -172,7 +172,7 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 reg-status-container">
                     <?php if ($reg['status'] === 'pending'): ?>
                         <a href="/events/<?= $event['id'] ?>/manage?action=approve&registration_id=<?= $reg['id'] ?>" 
                             class="p-2 bg-green-200 border-2 border-black rounded hover:bg-green-300" title="อนุมัติ">
@@ -192,4 +192,63 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+<script>
+const eventId = <?= $event['id'] ?>;
+const statsCache = {};
+setInterval(async () => {
+    try {
+        const res = await fetch(`/api/event-registrations?event_id=${eventId}`);
+        const data = await res.json();
+        if (data.error) return;
+        
+        const stats = data.stats;
+        const totalEl = document.querySelector('[data-stat="total"]');
+        const approvedEl = document.querySelector('[data-stat="approved"]');
+        const pendingEl = document.querySelector('[data-stat="pending"]');
+        const checkedInEl = document.querySelector('[data-stat="checked_in"]');
+        
+        if (totalEl && totalEl.textContent != stats.total) {
+            totalEl.textContent = stats.total;
+            totalEl.classList.add('animate-pulse');
+            setTimeout(() => totalEl.classList.remove('animate-pulse'), 500);
+        }
+        if (approvedEl && approvedEl.textContent != stats.approved) approvedEl.textContent = stats.approved;
+        if (pendingEl && pendingEl.textContent != stats.pending) pendingEl.textContent = stats.pending;
+        if (checkedInEl && checkedInEl.textContent != stats.checked_in) {
+            checkedInEl.textContent = stats.checked_in;
+            checkedInEl.classList.add('animate-pulse');
+            setTimeout(() => checkedInEl.classList.remove('animate-pulse'), 500);
+        }
+        
+        data.registrations.forEach(reg => {
+            let row = document.querySelector(`[data-reg-id="${reg.id}"]`);
+            if (!row) {
+                location.reload();
+                return;
+            }
+            const statusContainer = row.querySelector('.reg-status-container');
+            const currentStatus = statusContainer.querySelector('span')?.textContent?.trim();
+            let newStatusHtml = '';
+            let targetStatus = reg.status;
+            if (reg.checked_in) targetStatus = 'checked_in';
+            
+            if (targetStatus === 'pending') {
+                newStatusHtml = `<a href="/events/${eventId}/manage?action=approve&registration_id=${reg.id}" class="p-2 bg-green-200 border-2 border-black rounded hover:bg-green-300" title="อนุมัติ"><span class="material-symbols-outlined text-sm">check</span></a><a href="/events/${eventId}/manage?action=reject&registration_id=${reg.id}" class="p-2 bg-red-200 border-2 border-black rounded hover:bg-red-300" title="ปฏิเสธ"><span class="material-symbols-outlined text-sm">close</span></a>`;
+            } else if (targetStatus === 'approved') {
+                newStatusHtml = '<span class="text-xs font-bold px-2 py-1 rounded border-2 bg-green-100 text-green-700 border-green-500">อนุมัติแล้ว</span>';
+            } else if (targetStatus === 'checked_in') {
+                newStatusHtml = '<span class="text-xs font-bold px-2 py-1 rounded border-2 bg-blue-100 text-blue-700 border-blue-500">CHECKED IN</span>';
+            } else if (targetStatus === 'rejected') {
+                newStatusHtml = '<span class="text-xs font-bold px-2 py-1 rounded border-2 bg-red-100 text-red-700 border-red-500">ปฏิเสธ</span>';
+            }
+            
+            if (statusContainer.innerHTML !== newStatusHtml) {
+                statusContainer.innerHTML = newStatusHtml;
+                row.classList.add('ring-2', 'ring-yellow-400');
+                setTimeout(() => row.classList.remove('ring-2', 'ring-yellow-400'), 1000);
+            }
+        });
+    } catch (e) {}
+}, 3000);
+</script>
 <?php include 'footer.php' ?>
