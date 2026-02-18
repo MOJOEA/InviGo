@@ -330,7 +330,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
         </div>
     </aside>
-    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
+    <main class="page-transition flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
         <div class="md:hidden flex justify-between items-center mb-6">
             <h1 class="font-black text-xl flex items-center gap-2">
                 <span class="material-symbols-outlined bg-[#FFE600] border-2 border-black rounded p-1">confirmation_number</span>
