@@ -67,6 +67,110 @@
         </div>
     </div>
     
+    <div class="bg-white border-2 border-black rounded-xl p-6 mb-6 shadow-[4px_4px_0px_0px_black]">
+        <h3 class="font-bold mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined">history</span> ประวัติการเข้าร่วมกิจกรรม
+        </h3>
+        <style>
+        .accordion-item { border-bottom: 2px solid black; }
+        .accordion-item:last-child { border-bottom: none; }
+        .accordion-header {
+            width: 100%;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            background: white;
+            transition: background 0.2s;
+        }
+        .accordion-header:hover { background: #f9fafb; }
+        .accordion-icon {
+            width: 32px;
+            height: 32px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 2px 2px 0 0 black;
+            transition: transform 0.3s;
+        }
+        .accordion-item.active .accordion-icon { transform: rotate(180deg); }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+        }
+        </style>
+        <div class="border-2 border-black rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_black]">
+            <div class="accordion-item border-b-2 border-black">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-green-500">event_upcoming</span>
+                        กำลังจะมาถึง (<?= count(array_filter($registrations, fn($r) => strtotime($r['event_date'] ?? 'now') >= time())) ?>)
+                    </span>
+                    <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4">
+                        <?php
+                        $upcomingRegs = array_filter($registrations, fn($r) => strtotime($r['event_date'] ?? 'now') >= time());
+                        if (empty($upcomingRegs)): ?>
+                            <p class="text-gray-400 text-center py-4">ไม่มีกิจกรรมที่กำลังจะมาถึง</p>
+                        <?php else: ?>
+                            <div class="space-y-3">
+                                <?php foreach ($upcomingRegs as $reg): ?>
+                                    <a href="/events/<?= $reg['event_id'] ?>" class="block border-2 border-black rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                                        <p class="font-bold"><?= sanitize($reg['event_title'] ?? 'ไม่ระบุชื่อ') ?></p>
+                                        <p class="text-sm text-gray-500"><?= formatThaiDate($reg['event_date'] ?? '') ?></p>
+                                        <span class="inline-block mt-2 text-xs font-bold px-2 py-1 rounded border-2 <?= match($reg['status']) { 'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500', 'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500', 'rejected' => 'bg-red-100 text-red-700 border-red-500', default => 'bg-gray-100' } ?>">
+                                            <?= match($reg['status']) { 'pending' => 'รออนุมัติ', 'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว', 'rejected' => 'ปฏิเสธ', default => $reg['status'] } ?>
+                                        </span>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gray-500">event_busy</span>
+                        ที่ผ่านมา (<?= count(array_filter($registrations, fn($r) => strtotime($r['event_date'] ?? 'now') < time())) ?>)
+                    </span>
+                    <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-4">
+                        <?php
+                        $pastRegs = array_filter($registrations, fn($r) => strtotime($r['event_date'] ?? 'now') < time());
+                        if (empty($pastRegs)): ?>
+                            <p class="text-gray-400 text-center py-4">ไม่มีประวัติการเข้าร่วม</p>
+                        <?php else: ?>
+                            <div class="space-y-3">
+                                <?php foreach ($pastRegs as $reg): ?>
+                                    <a href="/events/<?= $reg['event_id'] ?>" class="block border-2 border-black rounded-lg p-3 hover:bg-gray-50 transition-colors opacity-75">
+                                        <p class="font-bold"><?= sanitize($reg['event_title'] ?? 'ไม่ระบุชื่อ') ?></p>
+                                        <p class="text-sm text-gray-500"><?= formatThaiDate($reg['event_date'] ?? '') ?></p>
+                                        <span class="inline-block mt-2 text-xs font-bold px-2 py-1 rounded border-2 <?= match($reg['status']) { 'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500', 'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500', 'rejected' => 'bg-red-100 text-red-700 border-red-500', default => 'bg-gray-100' } ?>">
+                                            <?= match($reg['status']) { 'pending' => 'รออนุมัติ', 'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว', 'rejected' => 'ปฏิเสธ', default => $reg['status'] } ?>
+                                        </span>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="flex gap-3">
         <a href="/profile/edit" class="neo-btn flex-1 bg-[#FFE600] py-3 font-bold text-center inline-flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">edit</span> แก้ไขโปรไฟล์
@@ -87,6 +191,14 @@
 </div>
 
 <script>
+function toggleAccordion(button) {
+    const item = button.parentElement;
+    document.querySelectorAll('.accordion-item').forEach(otherItem => {
+        if (otherItem !== item) otherItem.classList.remove('active');
+    });
+    item.classList.toggle('active');
+}
+
 function getCookie(name) {
     const value = '; ' + document.cookie;
     const parts = value.split('; ' + name + '=');

@@ -129,70 +129,192 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
 <h3 class="font-black text-xl mb-4 flex items-center gap-2">
     <span class="material-symbols-outlined">group</span> รายชื่อผู้เข้าร่วม (<?= count($registrations) ?>)
 </h3>
+<?php
+$pendingRegs = array_filter($registrations, fn($r) => $r['status'] === 'pending');
+$approvedRegs = array_filter($registrations, fn($r) => $r['status'] === 'approved' && !$r['checked_in']);
+$checkedInRegs = array_filter($registrations, fn($r) => $r['status'] === 'approved' && $r['checked_in']);
+$rejectedRegs = array_filter($registrations, fn($r) => $r['status'] === 'rejected');
+?>
+<style>
+.accordion-item { border-bottom: 2px solid black; }
+.accordion-header {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    background: white;
+    transition: background 0.2s;
+}
+.accordion-header:hover { background: #f9fafb; }
+.accordion-icon {
+    width: 32px;
+    height: 32px;
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    box-shadow: 2px 2px 0 0 black;
+    transition: transform 0.3s;
+}
+.accordion-item.active .accordion-icon { transform: rotate(180deg); }
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+}
+.accordion-item.active .accordion-content {
+    max-height: 2000px;
+    transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+}
+</style>
 <?php if (empty($registrations)): ?>
     <div class="neo-box p-8 text-center">
         <span class="material-symbols-outlined text-5xl text-gray-300 mb-3">group_off</span>
         <p class="text-gray-500 font-bold">ยังไม่มีผู้ลงทะเบียน</p>
     </div>
 <?php else: ?>
-    <div class="space-y-3">
-        <?php foreach ($registrations as $reg): 
-            $age = $reg['birth_date'] ? calculateAge($reg['birth_date']) : null;
-            $statusClass = match($reg['status']) {
-                'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500',
-                'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500',
-                'rejected' => 'bg-red-100 text-red-700 border-red-500',
-                default => 'bg-gray-100'
-            };
-            $statusLabel = match($reg['status']) {
-                'pending' => 'รออนุมัติ',
-                'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว',
-                'rejected' => 'ปฏิเสธ',
-                default => $reg['status']
-            };
-        ?>
-            <div class="neo-box p-3 flex justify-between items-center" data-reg-id="<?= $reg['id'] ?>">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
-                        <img src="<?= sanitize($reg['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
-                             alt="Profile" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
-                    </div>
-                    <div>
-                        <p class="font-bold text-sm"><?= sanitize($reg['name']) ?> 
-                            <?php if ($age): ?>
-                                <span class="text-xs text-gray-400">(<?= $age ?> ปี)</span>
-                            <?php endif; ?>
-                        </p>
-                        <p class="text-xs text-gray-500"><?= sanitize($reg['email']) ?></p>
-                        <p class="text-xs text-gray-400">
-                            <?= genderLabel($reg['gender'] ?? '') ?> • 
-                            สมัคร <?= date('d/m/Y', strtotime($reg['created_at'])) ?>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 reg-status-container">
-                    <?php if ($reg['status'] === 'pending'): ?>
-                        <a href="/events/<?= $event['id'] ?>/manage?action=approve&registration_id=<?= $reg['id'] ?>" 
-                            class="p-2 bg-green-200 border-2 border-black rounded hover:bg-green-300" title="อนุมัติ">
-                            <span class="material-symbols-outlined text-sm">check</span>
-                        </a>
-                        <a href="/events/<?= $event['id'] ?>/manage?action=reject&registration_id=<?= $reg['id'] ?>" 
-                            class="p-2 bg-red-200 border-2 border-black rounded hover:bg-red-300" title="ปฏิเสธ">
-                            <span class="material-symbols-outlined text-sm">close</span>
-                        </a>
+    <div class="border-2 border-black rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_black] mb-4">
+        <div class="accordion-item border-b-2 border-black">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-yellow-500">pending</span>
+                    รออนุมัติ (<?= count($pendingRegs) ?>)
+                </span>
+                <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+            </button>
+            <div class="accordion-content">
+                <div class="p-4 space-y-3">
+                    <?php if (empty($pendingRegs)): ?>
+                        <p class="text-gray-400 text-center py-4">ไม่มีรายการรออนุมัติ</p>
                     <?php else: ?>
-                        <span class="text-xs font-bold px-2 py-1 rounded border-2 <?= $statusClass ?>">
-                            <?= $statusLabel ?>
-                        </span>
+                        <?php foreach ($pendingRegs as $reg): renderRegRow($reg, $event['id']); endforeach; ?>
                     <?php endif; ?>
                 </div>
             </div>
-        <?php endforeach; ?>
+        </div>
+        <div class="accordion-item border-b-2 border-black">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    อนุมัติแล้ว (<?= count($approvedRegs) ?>)
+                </span>
+                <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+            </button>
+            <div class="accordion-content">
+                <div class="p-4 space-y-3">
+                    <?php if (empty($approvedRegs)): ?>
+                        <p class="text-gray-400 text-center py-4">ไม่มีรายการอนุมัติ</p>
+                    <?php else: ?>
+                        <?php foreach ($approvedRegs as $reg): renderRegRow($reg, $event['id']); endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item border-b-2 border-black">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-blue-500">login</span>
+                    Checked In (<?= count($checkedInRegs) ?>)
+                </span>
+                <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+            </button>
+            <div class="accordion-content">
+                <div class="p-4 space-y-3">
+                    <?php if (empty($checkedInRegs)): ?>
+                        <p class="text-gray-400 text-center py-4">ไม่มีรายการ Checked In</p>
+                    <?php else: ?>
+                        <?php foreach ($checkedInRegs as $reg): renderRegRow($reg, $event['id']); endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-red-500">cancel</span>
+                    ปฏิเสธ (<?= count($rejectedRegs) ?>)
+                </span>
+                <span class="accordion-icon"><span class="material-symbols-outlined">expand_more</span></span>
+            </button>
+            <div class="accordion-content">
+                <div class="p-4 space-y-3">
+                    <?php if (empty($rejectedRegs)): ?>
+                        <p class="text-gray-400 text-center py-4">ไม่มีรายการปฏิเสธ</p>
+                    <?php else: ?>
+                        <?php foreach ($rejectedRegs as $reg): renderRegRow($reg, $event['id']); endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 <?php endif; ?>
+<?php
+function renderRegRow($reg, $eventId) {
+    $age = $reg['birth_date'] ? calculateAge($reg['birth_date']) : null;
+    $statusClass = match($reg['status']) {
+        'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500',
+        'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500',
+        'rejected' => 'bg-red-100 text-red-700 border-red-500',
+        default => 'bg-gray-100'
+    };
+    $statusLabel = match($reg['status']) {
+        'pending' => 'รออนุมัติ',
+        'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว',
+        'rejected' => 'ปฏิเสธ',
+        default => $reg['status']
+    };
+?>
+    <div class="neo-box p-3 flex justify-between items-center" data-reg-id="<?= $reg['id'] ?>">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full border-2 border-black overflow-hidden bg-gray-100 flex-shrink-0">
+                <img src="<?= sanitize($reg['profile_image'] ?? 'https://api.dicebear.com/9.x/dylan/svg') ?>" 
+                     alt="Profile" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://api.dicebear.com/9.x/dylan/svg'">
+            </div>
+            <div>
+                <p class="font-bold text-sm"><?= sanitize($reg['name']) ?> 
+                    <?php if ($age): ?>
+                        <span class="text-xs text-gray-400">(<?= $age ?> ปี)</span>
+                    <?php endif; ?>
+                </p>
+                <p class="text-xs text-gray-500"><?= sanitize($reg['email']) ?></p>
+                <p class="text-xs text-gray-400">
+                    <?= genderLabel($reg['gender'] ?? '') ?> • 
+                    สมัคร <?= date('d/m/Y', strtotime($reg['created_at'])) ?>
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 reg-status-container">
+            <?php if ($reg['status'] === 'pending'): ?>
+                <a href="/events/<?= $eventId ?>/manage?action=approve&registration_id=<?= $reg['id'] ?>" 
+                    class="p-2 bg-green-200 border-2 border-black rounded hover:bg-green-300" title="อนุมัติ">
+                    <span class="material-symbols-outlined text-sm">check</span>
+                </a>
+                <a href="/events/<?= $eventId ?>/manage?action=reject&registration_id=<?= $reg['id'] ?>" 
+                    class="p-2 bg-red-200 border-2 border-black rounded hover:bg-red-300" title="ปฏิเสธ">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </a>
+            <?php else: ?>
+                <span class="text-xs font-bold px-2 py-1 rounded border-2 <?= $statusClass ?>">
+                    <?= $statusLabel ?>
+                </span>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php }
+?>
 <script>
+function toggleAccordion(button) {
+    const item = button.parentElement;
+    document.querySelectorAll('.accordion-item').forEach(otherItem => {
+        if (otherItem !== item) otherItem.classList.remove('active');
+    });
+    item.classList.toggle('active');
+}
 const eventId = <?= $event['id'] ?>;
 const statsCache = {};
 setInterval(async () => {
