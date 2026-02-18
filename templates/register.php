@@ -86,17 +86,76 @@
         .birth-date-container {
             position: relative;
         }
-        .birth-date-container input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent;
-            bottom: 0;
-            color: transparent;
-            cursor: pointer;
-            height: auto;
-            left: 0;
+        .picker-popup {
+            display: none;
             position: absolute;
-            right: 0;
-            top: 0;
-            width: auto;
+            top: 110%;
+            left: 0;
+            width: 320px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 1rem;
+            box-shadow: 8px 8px 0 0 black;
+            padding: 1rem;
+            z-index: 50;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .picker-popup.active { display: block; }
+        .picker-container {
+            display: flex;
+            height: 200px;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+        .picker-col {
+            flex: 1;
+            border: 3px solid black;
+            border-radius: 8px;
+            overflow-y: auto;
+            background: #fff;
+            scroll-behavior: smooth;
+        }
+        .picker-col::-webkit-scrollbar { width: 6px; }
+        .picker-col::-webkit-scrollbar-track { background: #eee; border-left: 2px solid black; }
+        .picker-col::-webkit-scrollbar-thumb { background: black; }
+        .picker-item {
+            padding: 8px 4px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid #f0f0f0;
+            transition: all 0.1s;
+            font-size: 0.875rem;
+        }
+        .picker-item:hover { background: #eee; }
+        .picker-item.selected {
+            background: #FFE600;
+            color: black;
+            border: 2px solid black;
+            font-weight: 700;
+        }
+        .col-label {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .birth-trigger {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .birth-trigger:hover, .birth-trigger.active {
+            background-color: #FEF08A;
+            box-shadow: 4px 4px 0 0 black;
+            transform: translate(-2px, -2px);
         }
         .age-display {
             font-size: 0.875rem;
@@ -191,9 +250,27 @@
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="text-left birth-date-container">
                     <label class="font-bold ml-1">วันเกิด <span class="text-red-500">*</span></label>
-                    <input type="date" id="birthDate" name="birth_date" max="" min=""
-                           class="neo-input w-full p-3 mt-1 outline-none focus:bg-yellow-50" 
-                           required value="<?= isset($_POST['birth_date']) ? sanitize($_POST['birth_date']) : '' ?>">
+                    <input type="hidden" name="birth_date" id="birthDate" required value="<?= isset($_POST['birth_date']) ? sanitize($_POST['birth_date']) : '' ?>">
+                    <div class="neo-input w-full p-3 mt-1 birth-trigger" id="date-trigger" onclick="togglePicker(event)">
+                        <span id="selected-date-text" class="text-gray-400">เลือกวันเกิด...</span>
+                        <span class="material-symbols-outlined">cake</span>
+                    </div>
+                    <div id="picker-popup" class="picker-popup" onclick="event.stopPropagation()">
+                        <div class="flex gap-2 mb-1">
+                            <div class="flex-1 col-label">วัน</div>
+                            <div class="flex-1 col-label">เดือน</div>
+                            <div class="flex-1 col-label">ปี (พ.ศ.)</div>
+                        </div>
+                        <div class="picker-container">
+                            <div class="picker-col" id="col-days"></div>
+                            <div class="picker-col" id="col-months"></div>
+                            <div class="picker-col" id="col-years"></div>
+                        </div>
+                        <div class="pt-2 border-t-2 border-dashed border-gray-300 flex justify-between items-center">
+                            <button type="button" class="text-sm text-red-500 font-bold hover:underline" onclick="clearDate()">ล้าง</button>
+                            <button type="button" class="bg-black text-white px-4 py-2 rounded-lg font-bold border-2 border-black hover:bg-white hover:text-black transition-colors" onclick="confirmDate()">ตกลง</button>
+                        </div>
+                    </div>
                     <p id="ageDisplay" class="age-display"></p>
                     <?php if (!empty($errors['birth_date'])): ?>
                         <p class="error-message"><?= sanitize($errors['birth_date']) ?></p>
@@ -235,24 +312,151 @@
         const maxDate = new Date(today.getFullYear() - 10, today.getMonth(), today.getDate());
         const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
         
-        birthDateInput.max = maxDate.toISOString().split('T')[0];
-        birthDateInput.min = minDate.toISOString().split('T')[0];
-        
+        const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        const currentYear = new Date().getFullYear();
+        const startYear = currentYear - 100;
+        let tempDate = { day: new Date().getDate(), month: new Date().getMonth(), year: currentYear };
+        let finalSelectedDate = null;
+
+        function initColumns() {
+            renderYears();
+            renderMonths();
+            renderDays();
+            setTimeout(() => {
+                scrollToSelection('col-days');
+                scrollToSelection('col-months');
+                scrollToSelection('col-years');
+            }, 10);
+        }
+
+        function renderYears() {
+            const container = document.getElementById('col-years');
+            container.innerHTML = '';
+            for (let y = currentYear; y >= startYear; y--) {
+                const el = createItem(y + 543, y === tempDate.year, () => {
+                    tempDate.year = y;
+                    updateSelection('col-years', y + 543);
+                    renderDays();
+                });
+                el.dataset.value = y;
+                container.appendChild(el);
+            }
+        }
+
+        function renderMonths() {
+            const container = document.getElementById('col-months');
+            container.innerHTML = '';
+            monthNames.forEach((m, index) => {
+                const el = createItem(m, index === tempDate.month, () => {
+                    tempDate.month = index;
+                    updateSelection('col-months', m);
+                    renderDays();
+                });
+                el.dataset.value = index;
+                container.appendChild(el);
+            });
+        }
+
+        function renderDays() {
+            const container = document.getElementById('col-days');
+            const daysInMonth = new Date(tempDate.year, tempDate.month + 1, 0).getDate();
+            if (tempDate.day > daysInMonth) tempDate.day = daysInMonth;
+            container.innerHTML = '';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const el = createItem(d, d === tempDate.day, () => {
+                    tempDate.day = d;
+                    updateSelection('col-days', d);
+                });
+                el.dataset.value = d;
+                container.appendChild(el);
+            }
+        }
+
+        function createItem(text, isSelected, onClick) {
+            const el = document.createElement('div');
+            el.className = `picker-item ${isSelected ? 'selected' : ''}`;
+            el.innerText = text;
+            el.onclick = onClick;
+            return el;
+        }
+
+        function updateSelection(colId, matchText) {
+            const container = document.getElementById(colId);
+            Array.from(container.children).forEach(child => {
+                child.classList.remove('selected');
+                if (child.innerText == matchText) child.classList.add('selected');
+            });
+        }
+
+        function scrollToSelection(colId) {
+            const container = document.getElementById(colId);
+            const selected = container.querySelector('.selected');
+            if (selected) {
+                const offset = selected.offsetTop - (container.clientHeight / 2) + (selected.clientHeight / 2);
+                container.scrollTop = offset;
+            }
+        }
+
+        function togglePicker(e) {
+            e.stopPropagation();
+            const popup = document.getElementById('picker-popup');
+            const trigger = document.getElementById('date-trigger');
+            if (popup.classList.contains('active')) {
+                closePicker();
+            } else {
+                popup.classList.add('active');
+                trigger.classList.add('active');
+                initColumns();
+            }
+        }
+
+        function closePicker() {
+            document.getElementById('picker-popup').classList.remove('active');
+            document.getElementById('date-trigger').classList.remove('active');
+        }
+
+        function confirmDate() {
+            finalSelectedDate = { ...tempDate };
+            updateInput();
+            validateBirthDate();
+            closePicker();
+        }
+
+        function updateInput() {
+            if (!finalSelectedDate) {
+                document.getElementById('selected-date-text').innerText = "เลือกวันเกิด...";
+                document.getElementById('selected-date-text').className = "text-gray-400";
+                document.getElementById('birthDate').value = '';
+                return;
+            }
+            const d = finalSelectedDate.day;
+            const m = monthNames[finalSelectedDate.month];
+            const y = finalSelectedDate.year + 543;
+            document.getElementById('selected-date-text').innerText = `${d} ${m} ${y}`;
+            document.getElementById('selected-date-text').className = "text-black font-bold";
+            const isoDate = `${finalSelectedDate.year}-${String(finalSelectedDate.month + 1).padStart(2, '0')}-${String(finalSelectedDate.day).padStart(2, '0')}`;
+            document.getElementById('birthDate').value = isoDate;
+        }
+
+        function clearDate() {
+            finalSelectedDate = null;
+            tempDate = { day: new Date().getDate(), month: new Date().getMonth(), year: currentYear };
+            updateInput();
+            closePicker();
+        }
+
         function validateBirthDate() {
-            const birthDate = new Date(birthDateInput.value);
-            const today = new Date();
-            
+            const birthDateInput = document.getElementById('birthDate');
+            const ageDisplay = document.getElementById('ageDisplay');
             if (!birthDateInput.value) {
                 ageDisplay.textContent = '';
                 return;
             }
-            
+            const birthDate = new Date(birthDateInput.value);
+            const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
             if (birthDate > today) {
                 ageDisplay.textContent = 'วันเกิดไม่ถูกต้อง';
                 ageDisplay.classList.add('invalid');
@@ -267,13 +471,9 @@
                 ageDisplay.classList.remove('invalid');
             }
         }
-        
-        birthDateInput.addEventListener('change', validateBirthDate);
-        
-        if (birthDateInput.value) {
-            validateBirthDate();
-        }
-        // Gender selection
+
+        document.addEventListener('click', closePicker);
+
         const genderBtns = document.querySelectorAll('.gender-btn');
         const genderInput = document.getElementById('genderInput');
         
