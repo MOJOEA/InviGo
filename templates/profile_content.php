@@ -56,7 +56,8 @@
                 <span class="text-sm text-gray-500">เสียงเอฟเฟกต์</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="soundToggle" class="sr-only peer">
-                    <div class="w-12 h-7 bg-white border-2 border-black shadow-[2px_2px_0px_0px_black] peer-checked:bg-[#FFE600] peer-checked:shadow-[2px_2px_0px_0px_black] rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-black after:rounded-full after:h-5 after:w-5 after:shadow-[1px_1px_0px_0px_black] after:transition-all peer-checked:after:translate-x-5 peer-checked:after:bg-white"></div>
+                    <div class="w-14 h-8 bg-gray-200 border-2 border-black peer-checked:bg-[#fb7185] transition-colors duration-200"></div>
+                    <div class="absolute left-[4px] top-[4px] bg-white border-2 border-black h-6 w-6 transition-all duration-200 peer-checked:translate-x-full"></div>
                 </label>
             </div>
             <button onclick="showTutorial()" class="w-full text-left text-sm text-gray-500 hover:text-black flex items-center gap-2 py-2">
