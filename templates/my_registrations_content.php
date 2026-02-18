@@ -66,7 +66,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                     <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-200">
                         <?php if ($reg['status'] === 'approved' && !$reg['checked_in'] && !$isPast): ?>
                             <?php if ($reg['otp']): ?>
-                                <button onclick="showOtpModal('<?= $reg['otp']['otp_code'] ?>', '<?= date('H:i', strtotime($reg['otp']['expires_at'])) ?>')" 
+                                <button onclick="showOtpModal('<?= $reg['otp']['otp_code'] ?>', <?= strtotime($reg['otp']['expires_at']) ?>)" 
                                     class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
                                     <span class="material-symbols-outlined text-sm">check_circle</span>
                                     เช็คอิน
@@ -139,21 +139,25 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 </div>
 
 <script>
-// Countdown for display OTP modal
+
 <?php if ($otpData && isset($otpData['expires'])): ?>
-let displayOtpRemaining = <?= max(0, strtotime($otpData['expires']) - time()) ?>;
+let otpExpiryTime = <?= strtotime($otpData['expires']) * 1000 ?>; // Store as timestamp in ms
 <?php else: ?>
-let displayOtpRemaining = 0;
+let otpExpiryTime = 0;
 <?php endif; ?>
+let displayOtpTimer = null;
 const displayOtpCountdownEl = document.getElementById('displayOtpCountdown');
 
-function updateCountdown() {
+function updateDisplayCountdown() {
     if (!displayOtpCountdownEl) return;
     
-    if (displayOtpRemaining > 0) {
-        const hours = Math.floor(displayOtpRemaining / 3600);
-        const mins = Math.floor((displayOtpRemaining % 3600) / 60);
-        const secs = displayOtpRemaining % 60;
+    const now = Date.now();
+    const remaining = Math.max(0, Math.floor((otpExpiryTime - now) / 1000));
+    
+    if (remaining > 0) {
+        const hours = Math.floor(remaining / 3600);
+        const mins = Math.floor((remaining % 3600) / 60);
+        const secs = remaining % 60;
         
         let timeStr = '';
         if (hours > 0) {
@@ -166,23 +170,30 @@ function updateCountdown() {
         displayOtpCountdownEl.textContent = 'หมดอายุแล้ว';
         const otpCodeEl = document.getElementById('displayOtpCode');
         if (otpCodeEl) otpCodeEl.textContent = '------';
+        if (displayOtpTimer) {
+            clearInterval(displayOtpTimer);
+            displayOtpTimer = null;
+        }
     }
 }
 
-if (displayOtpRemaining > 0) {
-    const displayOtpTimer = setInterval(() => {
-        displayOtpRemaining--;
-        if (displayOtpRemaining <= 0) {
-            clearInterval(displayOtpTimer);
-        }
-        updateCountdown();
-    }, 1000);
+function startDisplayCountdown() {
+    if (displayOtpTimer) {
+        clearInterval(displayOtpTimer);
+    }
+    if (otpExpiryTime > Date.now()) {
+        displayOtpTimer = setInterval(updateDisplayCountdown, 1000);
+        updateDisplayCountdown();
+    }
 }
-updateCountdown();
 
 function closeOtpDisplayModal() {
     const modal = document.getElementById('otpDisplayModal');
     if (modal) modal.classList.add('hidden');
+    if (displayOtpTimer) {
+        clearInterval(displayOtpTimer);
+        displayOtpTimer = null;
+    }
 }
 
 // Close modal when clicking outside
@@ -192,8 +203,13 @@ document.addEventListener('click', function(e) {
         closeOtpDisplayModal();
     }
 });
-</script>
+
+// Start countdown when modal is visible
+if (otpExpiryTime > 0) {
+    startDisplayCountdown();
+}
 <?php endif; ?>
+</script>
 
 <div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
@@ -246,16 +262,57 @@ document.getElementById('withdrawModal').addEventListener('click', function(e) {
     }
 });
 
-function showOtpModal(otp, expires) {
+function showOtpModal(otp, expiresAt) {
     document.getElementById('otpCode').textContent = otp;
-    document.getElementById('otpExpires').textContent = expires;
     document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
+    
+    // Start countdown for dynamic OTP modal
+    const otpExpiresEl = document.getElementById('otpExpires');
+    let otpModalTimer = null;
+    
+    function updateOtpModalCountdown() {
+        const now = Date.now();
+        const expiryMs = expiresAt * 1000; // expiresAt is Unix timestamp in seconds
+        const remaining = Math.max(0, Math.floor((expiryMs - now) / 1000));
+        
+        if (remaining > 0) {
+            const hours = Math.floor(remaining / 3600);
+            const mins = Math.floor((remaining % 3600) / 60);
+            const secs = remaining % 60;
+            
+            let timeStr = '';
+            if (hours > 0) {
+                timeStr = String(hours).padStart(2, '0') + ':' + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            } else {
+                timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            }
+            otpExpiresEl.textContent = timeStr;
+        } else {
+            otpExpiresEl.textContent = 'หมดอายุแล้ว';
+            document.getElementById('otpCode').textContent = '------';
+            if (otpModalTimer) {
+                clearInterval(otpModalTimer);
+                otpModalTimer = null;
+            }
+        }
+    }
+    
+    // Clear any existing timer and start new one
+    if (window.otpModalTimer) {
+        clearInterval(window.otpModalTimer);
+    }
+    updateOtpModalCountdown();
+    window.otpModalTimer = setInterval(updateOtpModalCountdown, 1000);
 }
 
 function closeOtpModal() {
     document.getElementById('otpModal').classList.add('hidden');
     document.removeEventListener('keydown', handleOtpKeydown);
+    if (window.otpModalTimer) {
+        clearInterval(window.otpModalTimer);
+        window.otpModalTimer = null;
+    }
 }
 
 function handleOtpKeydown(e) {
