@@ -255,6 +255,26 @@ if (!$currentUser) {
                 }, 3000);
             </script>
         <?php endif; ?>
+        
+        <!-- Feature Tour Components -->
+        <div id="tour-backdrop"></div>
+        <div id="tour-highlighter"></div>
+        <svg id="tour-arrow" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0;">
+            <path d="M10 90 Q 50 10 90 50" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" />
+            <path d="M70 40 L 90 50 L 60 70" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div id="tour-popover">
+            <div class="step-badge" id="tour-step-num">1/4</div>
+            <h3 class="text-2xl font-black uppercase mb-2" id="tour-title">Title Here</h3>
+            <p class="text-gray-700 font-medium mb-6 leading-relaxed" id="tour-desc">Description goes here.</p>
+            <div class="flex justify-between items-center">
+                <button onclick="endTour()" class="text-gray-500 font-bold hover:text-black hover:underline text-sm">Skip</button>
+                <button onclick="nextStep()" class="neo-btn-small bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800" id="tour-next-btn">
+                    ถัดไป <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        
         <div class="page-transition">
             <?= $content ?? '' ?>
         </div>

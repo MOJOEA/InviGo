@@ -138,6 +138,110 @@
         
         let currentStep = 0;
         
+        const tourSteps = [
+            { target: 'a[href="/explore"]', title: 'ค้นหากิจกรรม', desc: 'ค้นหากิจกรรมที่น่าสนใจและลงทะเบียนเข้าร่วม', placement: 'bottom' },
+            { target: 'a[href="/my-events"]', title: 'กิจกรรมของฉัน', desc: 'สร้างและจัดการกิจกรรมของคุณ', placement: 'bottom' },
+            { target: 'a[href="/my-registrations"]', title: 'การลงทะเบียน', desc: 'ดูสถานะการเข้าร่วมกิจกรรม', placement: 'bottom' },
+            { target: 'a[href="/profile"]', title: 'โปรไฟล์', desc: 'แก้ไขข้อมูลส่วนตัวและการตั้งค่า', placement: 'bottom' }
+        ];
+        let currentTourStep = 0;
+        let isTourActive = false;
+
+        function startTour() {
+            if (isTourActive) return;
+            isTourActive = true;
+            currentTourStep = 0;
+            document.getElementById('tour-backdrop').classList.add('active');
+            document.getElementById('tour-highlighter').classList.add('active');
+            renderTourStep();
+        }
+        window.startTour = startTour;
+
+        function endTour() {
+            isTourActive = false;
+            document.getElementById('tour-backdrop').classList.remove('active');
+            document.getElementById('tour-highlighter').classList.remove('active');
+            document.getElementById('tour-popover').style.opacity = '0';
+            document.getElementById('tour-arrow').style.opacity = '0';
+            setCookie('tourSeen', 'true', 365);
+        }
+        window.endTour = endTour;
+
+        function nextStep() {
+            if (currentTourStep < tourSteps.length - 1) {
+                currentTourStep++;
+                renderTourStep();
+            } else {
+                endTour();
+            }
+        }
+        window.nextStep = nextStep;
+
+        function renderTourStep() {
+            const step = tourSteps[currentTourStep];
+            const targetEl = document.querySelector(step.target);
+            if (!targetEl) return;
+            const highlighter = document.getElementById('tour-highlighter');
+            const popover = document.getElementById('tour-popover');
+            const arrow = document.getElementById('tour-arrow');
+            const rect = targetEl.getBoundingClientRect();
+            const padding = 10;
+            highlighter.style.top = (rect.top - padding) + 'px';
+            highlighter.style.left = (rect.left - padding) + 'px';
+            highlighter.style.width = (rect.width + padding * 2) + 'px';
+            highlighter.style.height = (rect.height + padding * 2) + 'px';
+            document.getElementById('tour-title').innerText = step.title;
+            document.getElementById('tour-desc').innerText = step.desc;
+            document.getElementById('tour-step-num').innerText = `${currentTourStep + 1}/${tourSteps.length}`;
+            const nextBtn = document.getElementById('tour-next-btn');
+            if (currentTourStep === tourSteps.length - 1) {
+                nextBtn.innerHTML = 'เสร็จสิ้น <span class="material-symbols-outlined text-sm">check</span>';
+                nextBtn.classList.remove('bg-black', 'text-white');
+                nextBtn.classList.add('bg-[#FFE600]', 'text-black');
+            } else {
+                nextBtn.innerHTML = 'ถัดไป <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+                nextBtn.classList.add('bg-black', 'text-white');
+                nextBtn.classList.remove('bg-[#FFE600]', 'text-black');
+            }
+            const popoverWidth = 320;
+            const gap = 20;
+            let popTop, popLeft;
+            if (step.placement === 'right') {
+                popLeft = rect.right + gap + 40;
+                popTop = rect.top;
+                arrow.style.left = (rect.right + 5) + 'px';
+                arrow.style.top = (rect.top + 20) + 'px';
+                arrow.style.transform = 'rotate(180deg)';
+            } else if (step.placement === 'left') {
+                popLeft = rect.left - popoverWidth - gap - 40;
+                popTop = rect.top;
+                arrow.style.left = (rect.left - 65) + 'px';
+                arrow.style.top = (rect.top + 20) + 'px';
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                popLeft = rect.left;
+                popTop = rect.bottom + gap + 40;
+                arrow.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+                arrow.style.top = (rect.bottom + 5) + 'px';
+                arrow.style.transform = 'rotate(-90deg)';
+            }
+            if (popLeft + popoverWidth > window.innerWidth) popLeft = window.innerWidth - popoverWidth - 20;
+            if (popTop + 200 > window.innerHeight) popTop = window.innerHeight - 200 - 20;
+            popover.style.top = popTop + 'px';
+            popover.style.left = popLeft + 'px';
+            popover.classList.remove('active');
+            void popover.offsetWidth;
+            popover.classList.add('active');
+            arrow.style.opacity = '1';
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        window.addEventListener('resize', () => { if (isTourActive) renderTourStep(); });
+
+        if (getCookie('tourSeen') !== 'true' && getCookie('tutorialSeen') === 'true') {
+            setTimeout(startTour, 1500);
+        }
+
         function showTutorial() {
             currentStep = 0;
             document.getElementById('tutorialOverlay').classList.remove('hidden');

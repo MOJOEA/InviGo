@@ -306,6 +306,83 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             border-right: 3px solid black;
             transition: width 0.1s ease-out;
         }
+        #tour-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        #tour-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #tour-highlighter {
+            position: absolute;
+            border: 5px solid #facc15;
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+        }
+        #tour-highlighter.active {
+            opacity: 1;
+            animation: pulseBorder 2s infinite;
+        }
+        @keyframes pulseBorder {
+            0% { border-color: #facc15; transform: scale(1); }
+            50% { border-color: white; transform: scale(1.02); }
+            100% { border-color: #facc15; transform: scale(1); }
+        }
+        #tour-popover {
+            position: absolute;
+            width: 320px;
+            background: white;
+            border: 4px solid black;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            z-index: 1001;
+            box-shadow: 10px 10px 0 0 black;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #tour-popover.active {
+            opacity: 1;
+        }
+        #tour-arrow {
+            position: absolute;
+            z-index: 1002;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            transition: all 0.4s ease;
+            filter: drop-shadow(3px 3px 0px black);
+            color: #facc15;
+        }
+        .step-badge {
+            background: #facc15;
+            border: 3px solid black;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            transform: rotate(-10deg);
+            box-shadow: 3px 3px 0 0 black;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 bg-dot-pattern relative overflow-x-hidden">
