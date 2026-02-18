@@ -228,21 +228,16 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
         
         .page-transition {
-            animation: neoSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.4s ease-out;
         }
-        @keyframes neoSlideIn {
-            0% {
+        @keyframes fadeInUp {
+            from {
                 opacity: 0;
-                transform: translateX(-40px) translateY(20px) scale(0.95);
-                filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+                transform: translateY(20px);
             }
-            50% {
-                filter: drop-shadow(8px 8px 0 rgba(0,0,0,0.3));
-            }
-            100% {
+            to {
                 opacity: 1;
-                transform: translateX(0) translateY(0) scale(1);
-                filter: drop-shadow(4px 4px 0 rgba(0,0,0,1));
+                transform: translateY(0);
             }
         }
         .slide-in-right {
