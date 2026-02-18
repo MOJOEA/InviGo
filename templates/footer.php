@@ -42,6 +42,7 @@
                 closeDeleteModal();
             }
         }
+    </script>
     <?php $isLoggedInFooter = !empty(getCurrentUser()); ?>
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t-2 border-black p-2 flex justify-around rounded-t-xl z-50">
         <a href="/explore" class="flex flex-col items-center p-2 <?= ($activePage ?? '') === 'explore' ? 'text-black' : 'text-gray-400' ?>">
