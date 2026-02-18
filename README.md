@@ -4,6 +4,9 @@ Final-Project-WebDevelopment
 
 demo : https://invigo.k1god.com
 
+
+figma: https://www.figma.com/design/Z4eBHhrhVZYCcl3CfG1nMd/Event?node-id=0-1&t=x3cgNM9N2hFLIUPc-1
+
 ระบบจัดการลงทะเบียนกิจกรรมแบบ Neo-brutalism
 
 ## เริ่มต้นใช้งาน
