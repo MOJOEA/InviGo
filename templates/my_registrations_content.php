@@ -143,7 +143,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
 <script>
 
 <?php if ($otpData && isset($otpData['expires'])): ?>
-let otpExpiryTime = <?= strtotime($otpData['expires']) * 1000 ?>; // Store as timestamp in ms
+let otpExpiryTime = <?= strtotime($otpData['expires']) * 1000 ?>;
 <?php else: ?>
 let otpExpiryTime = 0;
 <?php endif; ?>
@@ -198,7 +198,6 @@ function closeOtpDisplayModal() {
     }
 }
 
-// Close modal when clicking outside
 document.addEventListener('click', function(e) {
     const modal = document.getElementById('otpDisplayModal');
     if (modal && e.target === modal) {
@@ -206,7 +205,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Start countdown when modal is visible
 if (otpExpiryTime > 0) {
     startDisplayCountdown();
 }
@@ -257,7 +255,6 @@ function handleWithdrawKeydown(e) {
     }
 }
 
-// Close modal when clicking outside
 document.getElementById('withdrawModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeWithdrawModal();
@@ -269,13 +266,12 @@ function showOtpModal(otp, expiresAt) {
     document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
     
-    // Start countdown for dynamic OTP modal
     const otpExpiresEl = document.getElementById('otpExpires');
     let otpModalTimer = null;
     
     function updateOtpModalCountdown() {
         const now = Date.now();
-        const expiryMs = expiresAt * 1000; // expiresAt is Unix timestamp in seconds
+        const expiryMs = expiresAt * 1000;
         const remaining = Math.max(0, Math.floor((expiryMs - now) / 1000));
         
         if (remaining > 0) {
@@ -300,7 +296,6 @@ function showOtpModal(otp, expiresAt) {
         }
     }
     
-    // Clear any existing timer and start new one
     if (window.otpModalTimer) {
         clearInterval(window.otpModalTimer);
     }
@@ -324,7 +319,6 @@ function handleOtpKeydown(e) {
     }
 }
 
-// Close modal when clicking outside
 document.getElementById('otpModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeOtpModal();

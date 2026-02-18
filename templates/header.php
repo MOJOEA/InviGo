@@ -189,7 +189,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             color: #ef4444;
         }
         
-        /* Skeleton Loading */
         @keyframes skeleton-pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -207,7 +206,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             background: white;
         }
         
-        /* Empty States */
         .empty-state {
             text-align: center;
             padding: 3rem 1.5rem;
@@ -229,7 +227,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             color: #9ca3af;
         }
         
-        /* Page Transitions */
         .page-transition {
             animation: fadeInUp 0.4s ease-out;
         }
@@ -257,7 +254,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             }
         }
         
-        /* Loading Spinner */
         .spinner {
             border: 4px solid #f3f4f6;
             border-top: 4px solid #FFE600;
