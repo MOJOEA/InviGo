@@ -338,6 +338,9 @@ setInterval(async () => {
             if (card) {
                 const badge = card.querySelector('.status-badge');
                 const checkinBtn = card.querySelector('.checkin-btn');
+                const oldStatus = badge?.dataset?.status;
+                const newStatus = reg.status + (reg.checked_in ? '-checked_in' : '');
+                
                 if (badge) {
                     let html = '';
                     if (reg.status === 'approved' && reg.checked_in) {
@@ -349,7 +352,21 @@ setInterval(async () => {
                     } else if (reg.status === 'rejected') {
                         html = '<span class="bg-red-400 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>';
                     }
-                    if (badge.innerHTML !== html) badge.innerHTML = html;
+                    if (badge.innerHTML !== html) {
+                        badge.innerHTML = html;
+                        badge.dataset.status = newStatus;
+                        
+                        // Show toast notification
+                        const msg = reg.checked_in ? 'เช็คชื่อสำเร็จ!' : (reg.status === 'approved' ? 'ลงทะเบียนอนุมัติแล้ว' : reg.status === 'rejected' ? 'ลงทะเบียนถูกปฏิเสธ' : '');
+                        if (msg && oldStatus && oldStatus !== newStatus) {
+                            showToast(msg, reg.checked_in || reg.status === 'approved' ? 'success' : 'error');
+                        }
+                        
+                        // Close OTP modal if check-in completed
+                        if (reg.checked_in && document.getElementById('otpModal').classList.contains('flex')) {
+                            closeOtpModal();
+                        }
+                    }
                 }
                 if (checkinBtn && reg.status === 'approved' && !reg.checked_in && reg.otp) {
                     checkinBtn.style.display = 'inline-flex';
@@ -358,6 +375,22 @@ setInterval(async () => {
         });
     } catch (e) {}
 }, 3000);
+
+function showToast(message, type = 'success') {
+    const existing = document.querySelector('.toast-notification');
+    if (existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification fixed top-4 right-4 z-50 px-4 py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_black] font-bold animate-bounce ${type === 'success' ? 'bg-[#D4FF33]' : 'bg-red-100 text-red-600'}`;
+    toast.innerHTML = `<span class="material-symbols-outlined inline mr-1">${type === 'success' ? 'check_circle' : 'error'}</span>${message}`;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
 </script>
 
 <?php include 'footer.php' ?>
