@@ -333,46 +333,24 @@ setInterval(async () => {
     try {
         const res = await fetch('/api/registrations-status');
         const data = await res.json();
+        let shouldReload = false;
         data.forEach(reg => {
             const card = document.querySelector(`[data-reg-id="${reg.id}"]`);
             if (card) {
                 const badge = card.querySelector('.status-badge');
-                const checkinBtn = card.querySelector('.checkin-btn');
                 const oldStatus = badge?.dataset?.status;
                 const newStatus = reg.status + (reg.checked_in ? '-checked_in' : '');
                 
-                if (badge) {
-                    let html = '';
-                    if (reg.status === 'approved' && reg.checked_in) {
-                        html = '<span class="bg-blue-500 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check_circle</span> เช็คชื่อแล้ว</span>';
-                    } else if (reg.status === 'pending') {
-                        html = '<span class="bg-yellow-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">schedule</span> รออนุมัติ</span>';
-                    } else if (reg.status === 'approved') {
-                        html = '<span class="bg-green-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check</span> อนุมัติแล้ว</span>';
-                    } else if (reg.status === 'rejected') {
-                        html = '<span class="bg-red-400 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>';
-                    }
-                    if (badge.innerHTML !== html) {
-                        badge.innerHTML = html;
-                        badge.dataset.status = newStatus;
-                        
-                        // Show toast notification
-                        const msg = reg.checked_in ? 'เช็คชื่อสำเร็จ!' : (reg.status === 'approved' ? 'ลงทะเบียนอนุมัติแล้ว' : reg.status === 'rejected' ? 'ลงทะเบียนถูกปฏิเสธ' : '');
-                        if (msg && oldStatus && oldStatus !== newStatus) {
-                            showToast(msg, reg.checked_in || reg.status === 'approved' ? 'success' : 'error');
-                        }
-                        
-                        // Close OTP modal if check-in completed
-                        if (reg.checked_in && !document.getElementById('otpModal').classList.contains('hidden')) {
-                            closeOtpModal();
-                        }
-                    }
+                if (oldStatus && oldStatus !== newStatus) {
+                    shouldReload = true;
                 }
-                if (checkinBtn && reg.status === 'approved' && !reg.checked_in && reg.otp) {
-                    checkinBtn.style.display = 'inline-flex';
+                
+                if (badge && !oldStatus) {
+                    badge.dataset.status = newStatus;
                 }
             }
         });
+        if (shouldReload) location.reload();
     } catch (e) {}
 }, 3000);
 
