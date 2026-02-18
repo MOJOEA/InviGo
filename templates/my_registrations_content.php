@@ -17,12 +17,14 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
     <span class="material-symbols-outlined text-3xl">confirmation_number</span>
 </h2>
 <?php if (empty($registrations)): ?>
-    <div class="text-center py-12">
-        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">inbox</span>
-        <p class="text-gray-500 font-bold text-lg">ยังไม่มีการลงทะเบียน</p>
-        <p class="text-gray-400 text-sm mb-6">ค้นหากิจกรรมที่น่าสนใจและลงทะเบียนเลย!</p>
-        <a href="/explore" class="neo-btn inline-block bg-[#FFE600] px-6 py-3 font-bold">ค้นหากิจกรรม</a>
-    </div>
+    <div class="empty-state">
+            <div class="empty-state-icon">
+                <span class="material-symbols-outlined">confirmation_number</span>
+            </div>
+            <p class="text-gray-500 font-bold text-lg mb-2">ยังไม่มีการลงทะเบียน</p>
+            <p class="text-gray-400 text-sm mb-6">ค้นหากิจกรรมที่น่าสนใจและลงทะเบียนเลย!</p>
+            <a href="/explore" class="neo-btn inline-block bg-[#FFE600] px-6 py-3 font-bold">ค้นหากิจกรรม</a>
+        </div>
 <?php else: ?>
     <div class="space-y-4">
         <?php foreach ($registrations as $reg): 
