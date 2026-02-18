@@ -402,18 +402,20 @@
             const popup = document.getElementById('picker-popup');
             const trigger = document.getElementById('date-trigger');
             if (popup.classList.contains('active')) {
-                closePicker();
+                window.closePicker();
             } else {
                 popup.classList.add('active');
                 trigger.classList.add('active');
                 initColumns();
             }
         }
+        window.togglePicker = togglePicker;
 
         function closePicker() {
             document.getElementById('picker-popup').classList.remove('active');
             document.getElementById('date-trigger').classList.remove('active');
         }
+        window.closePicker = closePicker;
 
         function confirmDate() {
             finalSelectedDate = { ...tempDate };
@@ -421,6 +423,7 @@
             validateBirthDate();
             closePicker();
         }
+        window.confirmDate = confirmDate;
 
         function updateInput() {
             if (!finalSelectedDate) {
@@ -444,6 +447,7 @@
             updateInput();
             closePicker();
         }
+        window.clearDate = clearDate;
 
         function validateBirthDate() {
             const birthDateInput = document.getElementById('birthDate');
@@ -472,7 +476,7 @@
             }
         }
 
-        document.addEventListener('click', closePicker);
+        document.addEventListener('click', window.closePicker);
 
         const genderBtns = document.querySelectorAll('.gender-btn');
         const genderInput = document.getElementById('genderInput');
