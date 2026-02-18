@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo-Brutalist Full Interaction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- 1. FONTS & VARIABLES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #e0f2fe;
+            /* Light Blue */
+            --accent-1: #a78bfa;
+            /* Purple */
+            --accent-2: #facc15;
+            /* Yellow */
+            --accent-3: #fb7185;
+            /* Pink */
+            --border-color: #000000;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-color);
+            color: black;
+            overflow-x: hidden;
+            cursor: none;
+            /* ซ่อน Cursor ปกติเพื่อใช้ Custom Cursor */
+        }
+
+        /* --- 2. UTILITIES (Shadows & Borders) --- */
+        /* เงาแบบแข็ง (Hard Shadow) */
+        .neo-shadow {
+            box-shadow: 5px 5px 0px 0px var(--border-color);
+            transition: all 0.1s ease;
+        }
+
+        /* เวลากดปุ่ม ให้เงามันหายไป เหมือนปุ่มยุบลง */
+        .neo-shadow:active {
+            box-shadow: 0px 0px 0px 0px var(--border-color);
+            transform: translate(5px, 5px);
+        }
+
+        .neo-shadow-hover:hover {
+            box-shadow: 8px 8px 0px 0px var(--border-color);
+            transform: translate(-3px, -3px);
+        }
+
+        /* --- 3. ANIMATED BACKGROUND --- */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            animation: scrollGrid 20s linear infinite;
+        }
+
+        @keyframes scrollGrid {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+        /* Floating Shapes Animation */
+        .float-shape {
+            position: absolute;
+            z-index: -1;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+            border: 4px solid var(--border-color);
+            box-shadow: 4px 4px 0 0 var(--border-color);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        /* --- 4. MARQUEE (ตัววิ่ง) --- */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* --- 5. MICRO-INTERACTIONS --- */
+
+        /* Custom Cursor */
+        #cursor {
+            width: 24px;
+            height: 24px;
+            border: 2px solid black;
+            background-color: var(--accent-2);
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            transition: transform 0.1s ease, background-color 0.2s, width 0.2s, height 0.2s;
+            mix-blend-mode: exclusion;
+        }
+
+        #cursor.hovered {
+            width: 48px;
+            height: 48px;
+            background-color: white;
+            border-radius: 50%;
+            mix-blend-mode: difference;
+        }
+
+        /* Glitch Text Effect */
+        .glitch-hover:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: var(--accent-3);
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        /* Accordion Animation */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* --- 6. PAGE TRANSITION OVERLAY --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(0);
+            transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        #transition-overlay.hidden-transition {
+            transform: translateY(-100%);
+        }
+
+        .loader-text {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .loader-bar-container {
+            width: 300px;
+            height: 20px;
+            border: 2px solid white;
+            padding: 2px;
+        }
+
+        .loader-progress {
+            height: 100%;
+            width: 100%;
+            background: var(--accent-2);
+            transform-origin: left;
+            animation: loadProgress 1s ease-in-out forwards;
+        }
+
+        @keyframes loadProgress {
+            0% {
+                transform: scaleX(0);
+            }
+
+            100% {
+                transform: scaleX(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen relative">
+
+    <!-- Custom Cursor -->
+    <div id="cursor" class="hidden md:block"></div>
+
+    <!-- Page Transition Overlay -->
+    <div id="transition-overlay">
+        <div class="loader-text">LOADING_FULL_VER...</div>
+        <div class="loader-bar-container">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- Animated Background Layer -->
+    <div class="fixed inset-0 w-full h-full bg-grid -z-20"></div>
+
+    <!-- Floating Shapes (Background Elements) -->
+    <div class="float-shape w-16 h-16 bg-yellow-300 top-20 left-10 rotate-12"></div>
+    <div class="float-shape w-24 h-24 bg-pink-400 bottom-40 right-20 -rotate-12 rounded-full"
+        style="animation-delay: 1s;"></div>
+    <div class="float-shape w-12 h-12 bg-purple-400 top-1/2 left-1/4 rotate-45" style="animation-delay: 2s;"></div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-6xl mx-auto p-4 md:p-10">
+
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <div class="inline-block border-4 border-black bg-white p-4 neo-shadow hoverable">
+                <h1 class="text-5xl md:text-7xl font-bold uppercase tracking-tighter">Neo-Brutalism</h1>
+                <p class="text-xl font-bold mt-2 bg-black text-white inline-block px-2">Complete Interaction Kit</p>
+            </div>
+        </header>
+
+        <!-- Marquee Banner -->
+        <div
+            class="w-full border-y-4 border-black bg-yellow-300 mb-12 py-3 overflow-hidden transform -rotate-1 hover:rotate-0 transition-transform duration-300 hoverable">
+            <div class="marquee-container">
+                <div class="marquee-content text-2xl font-bold uppercase">
+                    Full Version • Toggle Switches • Grid Animations • Hard Shadows • Glitch Effects • Full Version •
+                    Toggle Switches • Grid Animations • Hard Shadows • Glitch Effects •
+                </div>
+                <div class="marquee-content text-2xl font-bold uppercase">
+                    Full Version • Toggle Switches • Grid Animations • Hard Shadows • Glitch Effects • Full Version •
+                    Toggle Switches • Grid Animations • Hard Shadows • Glitch Effects •
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Card 1: Buttons -->
+            <div class="border-4 border-black bg-white p-6 neo-shadow group hover:bg-pink-50 transition-colors">
+                <h2 class="text-2xl font-bold mb-6 border-b-4 border-black pb-2 inline-block">01. Buttons</h2>
+                <div class="space-y-4">
+                    <button
+                        class="w-full border-2 border-black bg-[#a78bfa] py-3 font-bold text-lg neo-shadow hoverable active:shadow-none active:translate-x-[5px] active:translate-y-[5px]">
+                        Click Me Hard
+                    </button>
+                    <button
+                        class="w-full border-2 border-black bg-[#facc15] py-3 font-bold text-lg neo-shadow hoverable flex items-center justify-center gap-2 group-hover:gap-4 transition-all">
+                        <span>Hover Expand</span>
+                        <span class="text-xl">→</span>
+                    </button>
+                    <button
+                        class="w-full border-2 border-black bg-white py-3 font-bold text-lg neo-shadow text-red-500 hover:bg-red-500 hover:text-white transition-colors hoverable">
+                        Danger Zone
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2: Inputs & Toggle -->
+            <div class="border-4 border-black bg-white p-6 neo-shadow">
+                <h2 class="text-2xl font-bold mb-6 border-b-4 border-black pb-2 inline-block">02. Inputs</h2>
+
+                <div class="space-y-6">
+                    <!-- Brutalist Input -->
+                    <div class="relative hoverable">
+                        <label class="block font-bold mb-1 text-sm uppercase">Username</label>
+                        <input type="text" placeholder="type_here..."
+                            class="w-full border-2 border-black p-3 font-bold focus:outline-none focus:ring-0 focus:bg-yellow-100 transition-colors neo-shadow focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none">
+                    </div>
+
+                    <!-- Toggle Switch Code (Integrated) -->
+                    <div class="flex items-center gap-4 hoverable">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <!-- Track -->
+                            <div
+                                class="w-14 h-8 bg-gray-200 border-2 border-black peer-focus:outline-none peer-checked:bg-[#fb7185] transition-colors duration-200">
+                            </div>
+                            <!-- Thumb -->
+                            <div
+                                class="absolute left-[4px] top-[4px] bg-white border-2 border-black h-6 w-6 transition-all duration-200 peer-checked:translate-x-full">
+                            </div>
+                        </label>
+                        <span class="font-bold">Toggle Switch</span>
+                    </div>
+
+                    <!-- Radio Group -->
+                    <div class="flex gap-4">
+                        <label class="cursor-pointer hoverable">
+                            <input type="radio" name="option" class="peer sr-only">
+                            <div
+                                class="w-10 h-10 border-2 border-black flex items-center justify-center peer-checked:bg-black peer-checked:text-white transition-colors font-bold">
+                                A</div>
+                        </label>
+                        <label class="cursor-pointer hoverable">
+                            <input type="radio" name="option" class="peer sr-only">
+                            <div
+                                class="w-10 h-10 border-2 border-black flex items-center justify-center peer-checked:bg-black peer-checked:text-white transition-colors font-bold">
+                                B</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: 3D Tilt Card -->
+            <div
+                class="border-4 border-black bg-[#a78bfa] p-6 neo-shadow relative overflow-hidden group hoverable tilt-card">
+                <div
+                    class="absolute -right-4 -top-4 w-24 h-24 bg-white border-4 border-black rounded-full z-0 group-hover:scale-150 transition-transform duration-500">
+                </div>
+                <div class="relative z-10 pointer-events-none">
+                    <h2 class="text-2xl font-bold mb-4 bg-white border-2 border-black inline-block px-2">03. 3D Hover
+                    </h2>
+                    <p class="font-bold bg-white/50 p-2 border-2 border-black mb-4 backdrop-blur-sm">
+                        Hover over this card. The JavaScript calculates the mouse position to create a 3D perspective
+                        tilt effect.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 4: Accordion -->
+            <div class="border-4 border-black bg-white p-0 neo-shadow md:col-span-2">
+                <div class="border-b-4 border-black p-4 bg-green-300">
+                    <h2 class="text-2xl font-bold">04. Snap Accordion</h2>
+                </div>
+
+                <!-- Item 1 -->
+                <div class="accordion-item border-b-2 border-black">
+                    <button
+                        class="w-full p-4 flex justify-between items-center font-bold hover:bg-green-50 transition-colors hoverable"
+                        onclick="toggleAccordion(this)">
+                        <span>What is Neo-Brutalism?</span>
+                        <span
+                            class="accordion-icon text-2xl border-2 border-black w-8 h-8 flex items-center justify-center bg-white shadow-[2px_2px_0_0_#000]">↓</span>
+                    </button>
+                    <div class="accordion-content bg-white">
+                        <p class="p-4 border-t-2 border-black">
+                            It merges the raw aesthetic of brutalism with modern animation and typography. High
+                            contrast, distinct borders, and raw HTML feel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Glitch Text -->
+            <div
+                class="border-4 border-black bg-black p-6 neo-shadow flex flex-col items-center justify-center text-center hoverable group">
+                <h2 class="text-4xl font-bold text-white glitch-hover cursor-default">
+                    HOVER<br>ME
+                </h2>
+                <div class="mt-4 w-full h-2 bg-white group-hover:w-1/2 transition-all duration-300"></div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-16 border-t-4 border-black pt-8 pb-4 text-center">
+            <button onclick="simulatePageTransition()"
+                class="border-2 border-black bg-white px-6 py-2 font-bold neo-shadow hover:bg-gray-100 hoverable">
+                Reload Transition
+            </button>
+            <p class="mt-4 font-bold text-sm opacity-50">© 2024 NEO_BRUTAL_CORP</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- 1. Custom Cursor Logic ---
+        const cursor = document.getElementById('cursor');
+        const hoverables = document.querySelectorAll('.hoverable, button, a, input, label');
+
+        // Move cursor
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Hover effects for cursor
+        hoverables.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- 2. Accordion Logic ---
+        function toggleAccordion(button) {
+            const item = button.parentElement;
+
+            // Close others
+            document.querySelectorAll('.accordion-item').forEach(otherItem => {
+                if (otherItem !== item) otherItem.classList.remove('active');
+            });
+
+            item.classList.toggle('active');
+        }
+
+        // --- 3. 3D Tilt Effect ---
+        const tiltCards = document.querySelectorAll('.tilt-card');
+
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Tilt Calculation
+                const xRotation = ((y - rect.height / 2) / rect.height) * 10; // 10deg max
+                const yRotation = ((x - rect.width / 2) / rect.width) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // --- 4. Page Transition Logic ---
+        // Initial Load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('transition-overlay').classList.add('hidden-transition');
+            }, 1200);
+        });
+
+        // Simulation Function (Triggered by Footer Button)
+        function simulatePageTransition() {
+            const overlay = document.getElementById('transition-overlay');
+            const text = overlay.querySelector('.loader-text');
+            const bar = overlay.querySelector('.loader-progress');
+
+            text.innerText = "RELOADING...";
+            overlay.classList.remove('hidden-transition');
+
+            // Reset Animation
+            bar.style.animation = 'none';
+            bar.offsetHeight; /* trigger reflow */
+            bar.style.animation = 'loadProgress 1s ease-in-out forwards';
+
+            setTimeout(() => {
+                overlay.classList.add('hidden-transition');
+            }, 1500);
+        }
+
+        // Disable custom cursor on touch devices
+        if ('ontouchstart' in window) {
+            cursor.style.display = 'none';
+            document.body.style.cursor = 'auto';
+        }
+    </script>
+</body>
+
+</html>

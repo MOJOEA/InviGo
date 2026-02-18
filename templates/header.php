@@ -309,14 +309,11 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         #tour-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(2px);
+            background: rgba(0, 0, 0, 0.35);
             z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s;
-            background-image: radial-gradient(#ffffff 1px, transparent 1px);
-            background-size: 20px 20px;
         }
         #tour-backdrop.active {
             opacity: 1;
@@ -324,9 +321,9 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
         #tour-highlighter {
             position: absolute;
-            border: 5px solid #facc15;
+            border: 4px solid #FFE600;
             border-radius: 12px;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
             z-index: 1000;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);

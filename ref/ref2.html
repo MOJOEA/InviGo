@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo-Brutalist UI Kit - Vol 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+
+        :root {
+            --accent-yellow: #EAB308;
+            --accent-pink: #FB7185;
+            --accent-green: #4ADE80;
+            --accent-blue: #60A5FA;
+            --accent-purple: #C084FC;
+            --border-color: #000;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #FFFBEB;
+            overflow-x: hidden;
+        }
+
+        /* --- Global Utilities --- */
+        .neo-box {
+            background: white;
+            border: 3px solid black;
+            border-radius: 1rem;
+            box-shadow: 6px 6px 0 0 black;
+            transition: all 0.2s;
+        }
+
+        .neo-box:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 0 black;
+        }
+
+        .neo-btn {
+            border: 3px solid black;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            box-shadow: 4px 4px 0 0 black;
+            transition: active 0.1s;
+        }
+
+        .neo-btn:active {
+            box-shadow: 0 0 0 0 black;
+            transform: translate(4px, 4px);
+        }
+
+        /* --- 1. Tabs (New) --- */
+        .neo-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: -3px;
+            /* Pull content up to overlap border */
+            position: relative;
+            z-index: 10;
+        }
+
+        .neo-tab {
+            padding: 0.5rem 1.5rem;
+            border: 3px solid black;
+            background: #eee;
+            font-weight: 700;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            top: 3px;
+            /* Push down to hide bottom border initially */
+        }
+
+        .neo-tab:hover {
+            background: #ddd;
+        }
+
+        .neo-tab.active {
+            background: white;
+            border-bottom: 3px solid white;
+            /* Hide bottom border */
+            z-index: 20;
+            top: 0px;
+            /* Pop up */
+        }
+
+        .neo-tab-content {
+            border: 3px solid black;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 6px 6px 0 0 black;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* --- 2. Pagination (New) --- */
+        .neo-pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid black;
+            font-weight: 700;
+            background: white;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 0 black;
+            transition: all 0.1s;
+        }
+
+        .page-item:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 0 black;
+        }
+
+        .page-item.active {
+            background: black;
+            color: white;
+            transform: translate(2px, 2px);
+            box-shadow: 0 0 0 0 black;
+        }
+
+        /* --- 3. Tooltip (New) --- */
+        .neo-tooltip-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .neo-tooltip {
+            visibility: hidden;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 0;
+            /* Sharp edges */
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-weight: 600;
+            border: 2px solid white;
+            box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .neo-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: black transparent transparent transparent;
+        }
+
+        .neo-tooltip-wrapper:hover .neo-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* --- 4. Steps (New) --- */
+        .neo-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .neo-step-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: black;
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .neo-step-item {
+            position: relative;
+            z-index: 1;
+            width: 32px;
+            height: 32px;
+            border: 3px solid black;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .neo-step-item.active {
+            background: var(--accent-green);
+            box-shadow: 0 0 0 2px white, 0 0 0 5px black;
+            border: none;
+        }
+
+        .neo-step-item.completed {
+            background: black;
+            color: white;
+            border-color: black;
+        }
+
+        /* --- Existing Styles (Calendar, Modal, Accordion) --- */
+        .marquee-container {
+            background: var(--accent-yellow);
+            border-top: 4px solid black;
+            border-bottom: 4px solid black;
+            padding: 12px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .picker-popup {
+            display: none;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            width: 100%;
+            min-width: 300px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 1rem;
+            box-shadow: 8px 8px 0 0 black;
+            padding: 1rem;
+            z-index: 50;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .picker-popup.active {
+            display: block;
+        }
+
+        .picker-container {
+            display: flex;
+            height: 200px;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .picker-col {
+            flex: 1;
+            border: 3px solid black;
+            border-radius: 8px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .picker-item {
+            padding: 8px 4px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .picker-item.selected {
+            background: var(--accent-yellow);
+            color: black;
+            border: 2px solid black;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            bottom: 0;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: grayscale(100%);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border: 4px solid black;
+            box-shadow: 10px 10px 0 0 black;
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+            animation: bounceIn 0.3s;
+        }
+
+        .accordion-item {
+            border: 3px solid black;
+            margin-bottom: 1rem;
+            background: white;
+            box-shadow: 4px 4px 0 0 black;
+        }
+
+        .accordion-header {
+            padding: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: #f0f0f0;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            padding: 0 1rem;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+            padding: 1rem;
+            border-top: 3px solid black;
+            background: #FEF08A;
+        }
+
+        .accordion-item.active .icon {
+            transform: rotate(180deg);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+            }
+
+            70% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body onclick="closePicker(event)">
+
+    <!-- Marquee Banner -->
+    <div class="marquee-container mb-12">
+        <div class="marquee-text">
+            NEO-BRUTALISM UI KIT /// RAW AESTHETICS /// HIGH CONTRAST /// BOLD TYPOGRAPHY /// NO BLUR /// JUST STROKES
+            /// NEO-BRUTALISM UI KIT /// RAW AESTHETICS /// HIGH CONTRAST /// BOLD TYPOGRAPHY /// NO BLUR /// JUST
+            STROKES ///
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pb-20 max-w-6xl">
+        <h1 class="text-4xl md:text-6xl font-black mb-12 text-center uppercase">
+            Component <span class="bg-black text-white px-2 transform -skew-x-6 inline-block">Library V2</span>
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+
+            <!-- LEFT COLUMN -->
+            <div class="space-y-12">
+
+                <!-- 01. Date Picker (Existing) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">01. Date Picker</h2>
+                    </div>
+                    <div class="neo-box p-6 relative z-30">
+                        <label class="block font-bold mb-2 text-lg">วันเกิด (แบบเร็ว):</label>
+                        <div class="flex justify-between items-center bg-white border-[3px] border-black rounded-xl p-3 cursor-pointer hover:bg-yellow-100 transition-colors shadow-[4px_4px_0_0_black]"
+                            id="date-trigger" onclick="togglePicker(event)">
+                            <span id="selected-date-text" class="text-gray-400 font-bold">เลือกวันเกิด...</span>
+                            <i class="fa-solid fa-cake-candles text-xl"></i>
+                        </div>
+                        <div id="picker-popup" class="picker-popup" onclick="event.stopPropagation()">
+                            <div class="flex gap-2 mb-1">
+                                <div class="flex-1 text-center text-xs font-bold uppercase text-gray-500">วัน</div>
+                                <div class="flex-1 text-center text-xs font-bold uppercase text-gray-500">เดือน</div>
+                                <div class="flex-1 text-center text-xs font-bold uppercase text-gray-500">ปี (พ.ศ.)
+                                </div>
+                            </div>
+                            <div class="picker-container">
+                                <div class="picker-col" id="col-days"></div>
+                                <div class="picker-col" id="col-months"></div>
+                                <div class="picker-col" id="col-years"></div>
+                            </div>
+                            <div
+                                class="pt-2 border-t-2 border-dashed border-gray-300 flex justify-between items-center">
+                                <button class="text-sm text-red-500 font-bold hover:underline"
+                                    onclick="clearDate()">ล้าง</button>
+                                <button
+                                    class="bg-black text-white px-6 py-2 rounded-lg font-bold border-2 border-black hover:bg-white hover:text-black transition-colors"
+                                    onclick="confirmDate()">ตกลง</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 03. Accordion (Existing) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">03. Accordion</h2>
+                    </div>
+                    <div>
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)"><span>WHAT IS
+                                    NEO-BRUTALISM?</span><i
+                                    class="fa-solid fa-chevron-down icon transition-transform duration-300"></i></div>
+                            <div class="accordion-content">
+                                <p class="font-medium">มันคือสไตล์การออกแบบที่เน้นความดิบ เส้นขอบหนา สีสันจัดจ้าน
+                                    และการใช้เงาแบบแข็ง</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)"><span>WHY USE THIS
+                                    STYLE?</span><i
+                                    class="fa-solid fa-chevron-down icon transition-transform duration-300"></i></div>
+                            <div class="accordion-content">
+                                <p class="font-medium">เพื่อสร้างความโดดเด่น น่าจดจำ และให้ความรู้สึกสนุกสนาน</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 05. Tooltips & Badges (New) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">05. Sharp Tooltips</h2>
+                    </div>
+                    <div class="neo-box p-8 flex flex-wrap gap-4 items-center justify-center">
+                        <div class="neo-tooltip-wrapper">
+                            <button class="neo-btn bg-[#60A5FA] text-white px-4 py-2">HOVER ME</button>
+                            <div class="neo-tooltip">Look at this sharp edge!</div>
+                        </div>
+                        <div class="neo-tooltip-wrapper">
+                            <span class="font-bold underline decoration-4 decoration-pink-400 cursor-help">INFO
+                                TEXT</span>
+                            <div class="neo-tooltip bg-pink-500 border-black">More details here</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="space-y-12">
+
+                <!-- 02. Modal (Existing) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">02. Alert Modal</h2>
+                    </div>
+                    <div class="neo-box p-6 bg-[#E0F2FE]">
+                        <p class="font-bold mb-4">ทดสอบการแจ้งเตือนแบบ Pop-up ดิบๆ</p>
+                        <button onclick="toggleModal(true)"
+                            class="neo-btn bg-white px-6 py-3 w-full text-lg hover:bg-red-200">OPEN MODAL ALERT</button>
+                    </div>
+                </div>
+
+                <!-- 04. Folder Tabs (New) -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">04. Folder Tabs</h2>
+                    </div>
+
+                    <div class="relative z-10">
+                        <div class="neo-tabs">
+                            <button class="neo-tab active" onclick="switchTab(event, 'tab1')">DETAILS</button>
+                            <button class="neo-tab" onclick="switchTab(event, 'tab2')">REVIEWS</button>
+                            <button class="neo-tab" onclick="switchTab(event, 'tab3')">SETTINGS</button>
+                        </div>
+                        <div class="neo-tab-content">
+                            <div id="tab1" class="tab-pane">
+                                <h3 class="font-bold text-xl mb-2">Product Details</h3>
+                                <p>นี่คือเนื้อหาของแท็บแรก ขอบด้านบนจะเชื่อมต่อกับแท็บที่ถูกเลือก
+                                    ทำให้ดูเหมือนแฟ้มเอกสารที่ถูกดึงออกมา</p>
+                            </div>
+                            <div id="tab2" class="tab-pane hidden">
+                                <h3 class="font-bold text-xl mb-2">User Reviews</h3>
+                                <div class="flex items-center gap-1 text-yellow-500 mb-2"><i
+                                        class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                        class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                        class="fa-solid fa-star"></i></div>
+                                <p>"สุดยอดมาก ชอบดีไซน์แบบนี้ที่สุด!" - User123</p>
+                            </div>
+                            <div id="tab3" class="tab-pane hidden">
+                                <h3 class="font-bold text-xl mb-2">Settings</h3>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-10 h-6 bg-black rounded-full relative cursor-pointer">
+                                        <div class="w-4 h-4 bg-white rounded-full absolute top-1 right-1"></div>
+                                    </div>
+                                    <span class="font-bold">Dark Mode</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 06. Pagination & Steps (New) -->
+                <div class="space-y-8">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-4 h-4 bg-black"></div>
+                        <h2 class="text-2xl font-bold uppercase">06. Navigation</h2>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="neo-box p-6 flex justify-center bg-[#F3F4F6]">
+                        <div class="neo-pagination">
+                            <div class="page-item"><i class="fa-solid fa-chevron-left"></i></div>
+                            <div class="page-item active">1</div>
+                            <div class="page-item">2</div>
+                            <div class="page-item">3</div>
+                            <div class="page-item">...</div>
+                            <div class="page-item">9</div>
+                            <div class="page-item"><i class="fa-solid fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Steps -->
+                    <div class="neo-box p-6">
+                        <div class="neo-steps">
+                            <div class="neo-step-line"></div>
+                            <div class="neo-step-item completed"><i class="fa-solid fa-check"></i></div>
+                            <div class="neo-step-item completed"><i class="fa-solid fa-check"></i></div>
+                            <div class="neo-step-item active">3</div>
+                            <div class="neo-step-item bg-gray-200 border-gray-400 text-gray-400">4</div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-xs font-bold uppercase">
+                            <span>Cart</span>
+                            <span>Address</span>
+                            <span>Payment</span>
+                            <span class="text-gray-400">Done</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div id="modal-overlay" class="modal-overlay" onclick="toggleModal(false)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div
+                class="w-16 h-16 bg-red-500 border-4 border-black rounded-full flex items-center justify-center mx-auto mb-4 text-3xl text-white">
+                <i class="fa-solid fa-exclamation"></i></div>
+            <h3 class="text-2xl font-black uppercase mb-2">System Alert</h3>
+            <p class="font-bold mb-6">หน้าต่างแจ้งเตือนแบบ Neo-Brutalist ไม่มีความเบลอ มีแต่เส้นขอบและความชัดเจน!</p>
+            <div class="flex gap-4"><button onclick="toggleModal(false)"
+                    class="flex-1 neo-btn bg-gray-200 py-2 hover:bg-gray-300">ยกเลิก</button><button
+                    onclick="toggleModal(false)"
+                    class="flex-1 neo-btn bg-black text-white py-2 hover:bg-gray-800">รับทราบ</button></div>
+        </div>
+    </div>
+
+    <script>
+        /* --- TABS LOGIC --- */
+        function switchTab(e, tabId) {
+            // Remove active from all tabs
+            document.querySelectorAll('.neo-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+
+            // Activate current
+            e.target.classList.add('active');
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+
+        /* --- EXISTING LOGIC (Calendar, Modal, Accordion) --- */
+        const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        const currentYear = new Date().getFullYear();
+        const startYear = currentYear - 100;
+        let tempDate = { day: new Date().getDate(), month: new Date().getMonth(), year: currentYear };
+        let finalSelectedDate = null;
+        document.addEventListener('DOMContentLoaded', () => initColumns());
+        function initColumns() { renderYears(); renderMonths(); renderDays(); setTimeout(() => { scrollToSelection('col-days'); scrollToSelection('col-months'); scrollToSelection('col-years'); }, 100); }
+        function renderYears() { const c = document.getElementById('col-years'); c.innerHTML = ''; for (let y = currentYear; y >= startYear; y--) { const el = createItem(y + 543, y === tempDate.year, () => { tempDate.year = y; updateSelection('col-years', y + 543); renderDays(); }); c.appendChild(el); } }
+        function renderMonths() { const c = document.getElementById('col-months'); c.innerHTML = ''; monthNames.forEach((m, i) => { const el = createItem(m, i === tempDate.month, () => { tempDate.month = i; updateSelection('col-months', m); renderDays(); }); c.appendChild(el); }); }
+        function renderDays() { const c = document.getElementById('col-days'); const dInM = new Date(tempDate.year, tempDate.month + 1, 0).getDate(); if (tempDate.day > dInM) tempDate.day = dInM; c.innerHTML = ''; for (let d = 1; d <= dInM; d++) { const el = createItem(d, d === tempDate.day, () => { tempDate.day = d; updateSelection('col-days', d); }); c.appendChild(el); } }
+        function createItem(t, s, clk) { const el = document.createElement('div'); el.className = `picker-item ${s ? 'selected' : ''}`; el.innerText = t; el.onclick = clk; return el; }
+        function updateSelection(id, txt) { Array.from(document.getElementById(id).children).forEach(c => { c.classList.remove('selected'); if (c.innerText == txt) c.classList.add('selected'); }); }
+        function scrollToSelection(id) { const c = document.getElementById(id); const s = c.querySelector('.selected'); if (s) c.scrollTop = s.offsetTop - (c.clientHeight / 2) + (s.clientHeight / 2); }
+        function togglePicker(e) { e.stopPropagation(); const p = document.getElementById('picker-popup'); if (p.classList.contains('active')) closePicker(); else { p.classList.add('active'); setTimeout(() => { scrollToSelection('col-days'); scrollToSelection('col-months'); scrollToSelection('col-years'); }, 10); } }
+        function closePicker() { document.getElementById('picker-popup').classList.remove('active'); }
+        function confirmDate() { finalSelectedDate = { ...tempDate }; const d = finalSelectedDate.day, m = monthNames[finalSelectedDate.month], y = finalSelectedDate.year + 543; const txt = document.getElementById('selected-date-text'); txt.innerText = `${d} ${m} ${y}`; txt.classList.remove('text-gray-400'); txt.classList.add('text-black'); closePicker(); }
+        function clearDate() { finalSelectedDate = null; tempDate = { day: new Date().getDate(), month: new Date().getMonth(), year: currentYear }; initColumns(); document.getElementById('selected-date-text').innerText = 'เลือกวันเกิด...'; document.getElementById('selected-date-text').classList.add('text-gray-400'); closePicker(); }
+        function toggleModal(s) { const m = document.getElementById('modal-overlay'); s ? m.classList.add('active') : m.classList.remove('active'); }
+        function toggleAccordion(h) { h.parentElement.classList.toggle('active'); }
+    </script>
+</body>
+
+</html>

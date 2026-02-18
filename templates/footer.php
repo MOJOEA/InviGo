@@ -1,5 +1,22 @@
 </main>
 
+<!-- Tutorial/Tour Elements -->
+<div id="tour-backdrop"></div>
+<div id="tour-highlighter"></div>
+<svg id="tour-arrow" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0;">
+    <path d="M12 2l-10 20h20L12 2z"/>
+</svg>
+<div id="tour-popover">
+    <div class="step-badge" id="tour-step-num">1/4</div>
+    <h3 id="tour-title" class="text-xl font-black mb-2 mt-2">Title</h3>
+    <p id="tour-desc" class="text-gray-600 mb-4">Description</p>
+    <div class="flex justify-end">
+        <button id="tour-next-btn" onclick="nextStep()" class="neo-btn bg-black text-white px-4 py-2 font-bold inline-flex items-center gap-2">
+            ถัดไป <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </button>
+    </div>
+</div>
+
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
         <div class="bg-white p-6 rounded-xl border-2 border-black shadow-[6px_6px_0px_0px_black] max-w-sm w-full mx-4">
             <div class="w-16 h-16 bg-red-100 border-2 border-red-500 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -116,7 +133,13 @@
             document.getElementById('tour-highlighter').classList.remove('active');
             document.getElementById('tour-popover').style.opacity = '0';
             document.getElementById('tour-arrow').style.opacity = '0';
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             setCookie('tourSeen', 'true', 365);
+
+            setTimeout(() => {
+                window.location.href = '/explore';
+            }, 100);
         }
         window.endTour = endTour;
 
@@ -134,6 +157,14 @@
             const step = tourSteps[currentTourStep];
             const targetEl = document.querySelector(step.target);
             if (!targetEl) return;
+            
+            // Remove active from all nav items first
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            // Add active to current target if it's a nav-item
+            if (targetEl.classList.contains('nav-item')) {
+                targetEl.classList.add('active');
+            }
+            
             const highlighter = document.getElementById('tour-highlighter');
             const popover = document.getElementById('tour-popover');
             const arrow = document.getElementById('tour-arrow');
@@ -191,7 +222,7 @@
 
         window.addEventListener('resize', () => { if (isTourActive) renderTourStep(); });
 
-        if (getCookie('tourSeen') !== 'true' && getCookie('tutorialSeen') === 'true') {
+        if (getCookie('tourSeen') !== 'true') {
             setTimeout(startTour, 1500);
         }
 
