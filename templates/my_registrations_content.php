@@ -32,7 +32,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
             $isPast = $eventDate < $now;
             $isFull = $reg['approved_count'] >= $reg['max_participants'];
         ?>
-            <div class="neo-box p-4 flex flex-col md:flex-row gap-4 relative">
+            <div class="neo-box p-4 flex flex-col md:flex-row gap-4 relative" data-reg-id="<?= $reg['id'] ?>">
                 <a href="/events/<?= $reg['event_id'] ?>" class="w-full md:w-32 h-24 bg-gray-200 rounded-lg border-2 border-black overflow-hidden flex-shrink-0 block">
                     <?php if ($reg['image']): ?>
                         <img src="<?= sanitize($reg['image']) ?>" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x200'">
@@ -45,7 +45,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                 <div class="flex-1 flex flex-col">
                     <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
                         <a href="/events/<?= $reg['event_id'] ?>" class="font-black text-lg hover:text-[#40E0D0] leading-tight"><?= sanitize($reg['title']) ?></a>
-                        <div class="flex-shrink-0">
+                        <div class="flex-shrink-0 status-badge">
                             <?= getStatusBadge($reg['status'], $reg['checked_in']) ?>
                         </div>
                     </div>
@@ -67,7 +67,7 @@ function getStatusBadge(string $status, bool $checkedIn = false): string {
                         <?php if ($reg['status'] === 'approved' && !$reg['checked_in'] && !$isPast): ?>
                             <?php if ($reg['otp']): ?>
                                 <button onclick="showOtpModal('<?= $reg['otp']['otp_code'] ?>', <?= strtotime($reg['otp']['expires_at']) ?>)" 
-                                    class="neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
+                                    class="checkin-btn neo-btn-small bg-[#40E0D0] px-4 py-2 text-sm font-bold inline-flex items-center gap-1">
                                     <span class="material-symbols-outlined text-sm">check_circle</span>
                                     เช็คอิน
                                 </button>
@@ -328,6 +328,36 @@ document.getElementById('otpModal').addEventListener('click', function(e) {
         closeOtpModal();
     }
 });
+
+setInterval(async () => {
+    try {
+        const res = await fetch('/api/registrations-status');
+        const data = await res.json();
+        data.forEach(reg => {
+            const card = document.querySelector(`[data-reg-id="${reg.id}"]`);
+            if (card) {
+                const badge = card.querySelector('.status-badge');
+                const checkinBtn = card.querySelector('.checkin-btn');
+                if (badge) {
+                    let html = '';
+                    if (reg.status === 'approved' && reg.checked_in) {
+                        html = '<span class="bg-blue-500 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check_circle</span> เช็คชื่อแล้ว</span>';
+                    } else if (reg.status === 'pending') {
+                        html = '<span class="bg-yellow-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">schedule</span> รออนุมัติ</span>';
+                    } else if (reg.status === 'approved') {
+                        html = '<span class="bg-green-400 text-black border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">check</span> อนุมัติแล้ว</span>';
+                    } else if (reg.status === 'rejected') {
+                        html = '<span class="bg-red-400 text-white border-2 border-black px-3 py-1.5 rounded-lg text-xs font-black inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_black]"><span class="material-symbols-outlined text-sm">close</span> ปฏิเสธ</span>';
+                    }
+                    if (badge.innerHTML !== html) badge.innerHTML = html;
+                }
+                if (checkinBtn && reg.status === 'approved' && !reg.checked_in && reg.otp) {
+                    checkinBtn.style.display = 'inline-flex';
+                }
+            }
+        });
+    } catch (e) {}
+}, 3000);
 </script>
 
 <?php include 'footer.php' ?>
