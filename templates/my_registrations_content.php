@@ -363,7 +363,7 @@ setInterval(async () => {
                         }
                         
                         // Close OTP modal if check-in completed
-                        if (reg.checked_in && document.getElementById('otpModal').classList.contains('flex')) {
+                        if (reg.checked_in && !document.getElementById('otpModal').classList.contains('hidden')) {
                             closeOtpModal();
                         }
                     }
