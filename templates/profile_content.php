@@ -126,7 +126,7 @@
                             <div class="space-y-3">
                                 <?php foreach ($upcomingRegs as $reg): ?>
                                     <a href="/events/<?= $reg['event_id'] ?>" class="block border-2 border-black rounded-lg p-3 hover:bg-gray-50 transition-colors">
-                                        <p class="font-bold"><?= sanitize($reg['event_title'] ?? 'ไม่ระบุชื่อ') ?></p>
+                                        <p class="font-bold"><?= sanitize($reg['title'] ?? 'ไม่ระบุชื่อ') ?></p>
                                         <p class="text-sm text-gray-500"><?= formatThaiDate($reg['event_date'] ?? '') ?></p>
                                         <span class="inline-block mt-2 text-xs font-bold px-2 py-1 rounded border-2 <?= match($reg['status']) { 'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500', 'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500', 'rejected' => 'bg-red-100 text-red-700 border-red-500', default => 'bg-gray-100' } ?>">
                                             <?= match($reg['status']) { 'pending' => 'รออนุมัติ', 'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว', 'rejected' => 'ปฏิเสธ', default => $reg['status'] } ?>
@@ -156,7 +156,7 @@
                             <div class="space-y-3">
                                 <?php foreach ($pastRegs as $reg): ?>
                                     <a href="/events/<?= $reg['event_id'] ?>" class="block border-2 border-black rounded-lg p-3 hover:bg-gray-50 transition-colors opacity-75">
-                                        <p class="font-bold"><?= sanitize($reg['event_title'] ?? 'ไม่ระบุชื่อ') ?></p>
+                                        <p class="font-bold"><?= sanitize($reg['title'] ?? 'ไม่ระบุชื่อ') ?></p>
                                         <p class="text-sm text-gray-500"><?= formatThaiDate($reg['event_date'] ?? '') ?></p>
                                         <span class="inline-block mt-2 text-xs font-bold px-2 py-1 rounded border-2 <?= match($reg['status']) { 'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-500', 'approved' => $reg['checked_in'] ? 'bg-blue-100 text-blue-700 border-blue-500' : 'bg-green-100 text-green-700 border-green-500', 'rejected' => 'bg-red-100 text-red-700 border-red-500', default => 'bg-gray-100' } ?>">
                                             <?= match($reg['status']) { 'pending' => 'รออนุมัติ', 'approved' => $reg['checked_in'] ? 'CHECKED IN' : 'อนุมัติแล้ว', 'rejected' => 'ปฏิเสธ', default => $reg['status'] } ?>
