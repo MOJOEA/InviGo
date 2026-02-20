@@ -1,12 +1,10 @@
 </main>
 
-<!-- Tutorial/Tour Elements -->
-<div id="tour-backdrop"></div>
 <div id="tour-highlighter"></div>
 <svg id="tour-arrow" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0;">
     <path d="M12 2l-10 20h20L12 2z"/>
 </svg>
-<div id="tour-popover">
+<div id="tour-popover" style="display: none;">
     <div class="step-badge" id="tour-step-num">1/4</div>
     <h3 id="tour-title" class="text-xl font-black mb-2 mt-2">Title</h3>
     <p id="tour-desc" class="text-gray-600 mb-4">Description</p>
@@ -121,7 +119,6 @@
             if (isTourActive) return;
             isTourActive = true;
             currentTourStep = 0;
-            document.getElementById('tour-backdrop').classList.add('active');
             document.getElementById('tour-highlighter').classList.add('active');
             renderTourStep();
         }
@@ -129,12 +126,12 @@
 
         function endTour() {
             isTourActive = false;
-            document.getElementById('tour-backdrop').classList.remove('active');
             document.getElementById('tour-highlighter').classList.remove('active');
-            document.getElementById('tour-popover').style.opacity = '0';
+            document.getElementById('tour-popover').style.display = 'none';
             document.getElementById('tour-arrow').style.opacity = '0';
-            // Remove active from all nav items
+            // Remove active from all nav items and tour highlights
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tour-highlight-target').forEach(el => el.classList.remove('tour-highlight-target'));
             setCookie('tourSeen', 'true', 365);
 
             setTimeout(() => {
@@ -157,6 +154,11 @@
             const step = tourSteps[currentTourStep];
             const targetEl = document.querySelector(step.target);
             if (!targetEl) return;
+            
+            // Remove highlight from previous targets
+            document.querySelectorAll('.tour-highlight-target').forEach(el => el.classList.remove('tour-highlight-target'));
+            // Add highlight to current target (brings it above highlighter)
+            targetEl.classList.add('tour-highlight-target');
             
             // Remove active from all nav items first
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -213,6 +215,7 @@
             if (popTop + 200 > window.innerHeight) popTop = window.innerHeight - 200 - 20;
             popover.style.top = popTop + 'px';
             popover.style.left = popLeft + 'px';
+            popover.style.display = 'block';
             popover.classList.remove('active');
             void popover.offsetWidth;
             popover.classList.add('active');

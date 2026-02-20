@@ -306,25 +306,12 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             border-right: 3px solid black;
             transition: width 0.1s ease-out;
         }
-        #tour-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        #tour-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
         #tour-highlighter {
             position: absolute;
             border: 4px solid #FFE600;
             border-radius: 12px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
-            z-index: 1000;
+            z-index: 10003;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             opacity: 0;
@@ -345,7 +332,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             border: 4px solid black;
             border-radius: 1rem;
             padding: 1.5rem;
-            z-index: 1001;
+            z-index: 10001;
             box-shadow: 10px 10px 0 0 black;
             opacity: 0;
             transition: opacity 0.3s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -355,7 +342,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
         #tour-arrow {
             position: absolute;
-            z-index: 1002;
+            z-index: 10000;
             width: 60px;
             height: 60px;
             pointer-events: none;
@@ -379,6 +366,10 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             left: -20px;
             transform: rotate(-10deg);
             box-shadow: 3px 3px 0 0 black;
+        }
+        .tour-highlight-target {
+            position: relative;
+            z-index: 10004;
         }
     </style>
 </head>
