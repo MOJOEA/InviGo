@@ -1,4 +1,5 @@
 <?php include 'header.php' ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <?php
 function getStatusBadge(string $status, bool $checkedIn = false): string {
     if ($status === 'approved' && $checkedIn) {
@@ -218,6 +219,8 @@ if (otpExpiryTime > 0) {
             <p class="text-sm text-gray-500 mb-4">แสดงรหัสนี้ให้ผู้จัดงานสแกน</p>
             
             <div class="bg-[#D4FF33] border-4 border-black rounded-xl p-4 mb-4">
+                <div id="qrcode" class="flex justify-center mb-3"></div>
+                <p class="text-xs text-gray-600 mb-1">หรือกรอกรหัส:</p>
                 <span id="otpCode" class="text-4xl font-black tracking-widest"></span>
             </div>
             
@@ -265,6 +268,18 @@ function showOtpModal(otp, expiresAt) {
     document.getElementById('otpCode').textContent = otp;
     document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
+    
+    // Generate QR Code
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+        text: otp,
+        width: 180,
+        height: 180,
+        colorDark: '#000000',
+        colorLight: '#D4FF33',
+        correctLevel: QRCode.CorrectLevel.M
+    });
     
     const otpExpiresEl = document.getElementById('otpExpires');
     let otpModalTimer = null;

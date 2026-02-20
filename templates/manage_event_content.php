@@ -1,4 +1,5 @@
 <?php include 'header.php' ?>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <?php
 function genderLabel(string $gender): string {
     return match($gender) {
@@ -31,13 +32,16 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
         <p class="text-gray-500 font-bold">Dashboard & Check-in</p>
     </div>
     <div class="bg-white border-2 border-black p-2 rounded-xl flex gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
-        <form method="POST" action="/events/<?= $event['id'] ?>/manage" class="flex gap-2">
-            <input type="text" name="otp_code" placeholder="กรอก OTP 6 หลัก" maxlength="6"
+        <form method="POST" action="/events/<?= $event['id'] ?>/manage" id="otpForm" class="flex gap-2">
+            <input type="text" name="otp_code" id="otpInput" placeholder="กรอก OTP 6 หลัก" maxlength="6"
                 class="border-2 border-black rounded-lg px-3 py-2 w-32 text-center font-bold tracking-widest outline-none">
             <button type="submit" class="neo-btn-small bg-[#40E0D0] px-4 py-2 font-bold flex items-center gap-2 hover:bg-[#3dd1c2]">
-                <span class="material-symbols-outlined">qr_code_scanner</span> ตรวจสอบ
+                <span class="material-symbols-outlined">check_circle</span> ตรวจสอบ
             </button>
         </form>
+        <button onclick="openQrScanner()" class="neo-btn-small bg-[#FFE600] px-4 py-2 font-bold flex items-center gap-2 hover:bg-[#f5db0b]" title="สแกน QR Code">
+            <span class="material-symbols-outlined">qr_code_scanner</span>
+        </button>
     </div>
 </div>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -125,6 +129,14 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
     <a href="/events/<?= $event['id'] ?>/edit" class="neo-btn-small bg-[#D4FF33] px-4 py-2 font-bold flex items-center gap-2 hover:bg-[#cbf531]">
         <span class="material-symbols-outlined">edit</span> แก้ไขกิจกรรม
     </a>
+    <?php if (!empty($registrations)): ?>
+    <button onclick="showClearModal()" class="neo-btn-small bg-orange-100 text-orange-700 px-4 py-2 font-bold flex items-center gap-2 hover:bg-orange-200">
+        <span class="material-symbols-outlined">cleaning_services</span> เคลียร์การลงทะเบียน
+    </button>
+    <?php endif; ?>
+    <button onclick="showDeleteModal()" class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 font-bold flex items-center gap-2 hover:bg-red-200">
+        <span class="material-symbols-outlined">delete</span> ลบกิจกรรม
+    </button>
 </div>
 <h3 class="font-black text-xl mb-4 flex items-center gap-2">
     <span class="material-symbols-outlined">group</span> รายชื่อผู้เข้าร่วม (<?= count($registrations) ?>)
@@ -307,6 +319,57 @@ function renderRegRow($reg, $eventId) {
     </div>
 <?php }
 ?>
+
+<!-- Clear Registrations Modal -->
+<div id="clearModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-orange-100 border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-3xl text-orange-600">cleaning_services</span>
+            </div>
+            <h3 class="text-xl font-black mb-2">ยืนยันการเคลียร์การลงทะเบียน</h3>
+            <p class="text-gray-500 mb-6">การดำเนินการนี้จะลบผู้ลงทะเบียนทั้งหมดออกจากกิจกรรมนี้ และไม่สามารถเรียกคืนได้</p>
+            <div class="flex gap-3">
+                <button onclick="closeClearModal()" class="neo-btn flex-1 bg-gray-200 py-3 font-bold">
+                    ยกเลิก
+                </button>
+                <form method="POST" action="/events/<?= $event['id'] ?>/clear-registrations" class="flex-1">
+                    <button type="submit" class="neo-btn w-full bg-orange-400 text-white py-3 font-bold inline-flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm">check</span>
+                        ยืนยัน
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Event Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-3xl text-red-600">delete_forever</span>
+            </div>
+            <h3 class="text-xl font-black mb-2">ยืนยันการลบกิจกรรม</h3>
+            <p class="text-gray-500 mb-2">คุณต้องการลบกิจกรรม</p>
+            <p class="font-bold text-black mb-6 text-lg"><?= sanitize($event['title']) ?></p>
+            <p class="text-red-500 text-sm mb-6">การดำเนินการนี้ไม่สามารถเรียกคืนได้!</p>
+            <div class="flex gap-3">
+                <button onclick="closeDeleteModal()" class="neo-btn flex-1 bg-gray-200 py-3 font-bold">
+                    ยกเลิก
+                </button>
+                <form method="POST" action="/events/<?= $event['id'] ?>/delete" class="flex-1">
+                    <button type="submit" class="neo-btn w-full bg-red-400 text-white py-3 font-bold inline-flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                        ลบกิจกรรม
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function toggleAccordion(button) {
     const item = button.parentElement;
@@ -315,6 +378,49 @@ function toggleAccordion(button) {
     });
     item.classList.toggle('active');
 }
+
+function showClearModal() {
+    document.getElementById('clearModal').classList.remove('hidden');
+    document.addEventListener('keydown', handleClearKeydown);
+}
+
+function closeClearModal() {
+    document.getElementById('clearModal').classList.add('hidden');
+    document.removeEventListener('keydown', handleClearKeydown);
+}
+
+function handleClearKeydown(e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        closeClearModal();
+    }
+}
+
+document.getElementById('clearModal').addEventListener('click', function(e) {
+    if (e.target === this) closeClearModal();
+});
+
+function showDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('hidden');
+    document.addEventListener('keydown', handleDeleteKeydown);
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+    document.removeEventListener('keydown', handleDeleteKeydown);
+}
+
+function handleDeleteKeydown(e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        closeDeleteModal();
+    }
+}
+
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+});
+
 const eventId = <?= $event['id'] ?>;
 const statsCache = {};
 setInterval(async () => {
@@ -372,5 +478,71 @@ setInterval(async () => {
         });
     } catch (e) {}
 }, 3000);
+
+// QR Scanner Modal
+const qrModal = document.createElement('div');
+qrModal.id = 'qrScannerModal';
+qrModal.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4';
+qrModal.innerHTML = `
+    <div class="bg-white border-4 border-black rounded-2xl p-4 max-w-md w-full shadow-[8px_8px_0px_0px_black]">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-black">สแกน QR Code</h3>
+            <button onclick="closeQrScanner()" class="p-2 hover:bg-gray-100 rounded">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="qr-reader" class="w-full"></div>
+        <p class="text-center text-gray-500 text-sm mt-4">นำ QR Code มาอยู่ในกรอบเพื่อสแกน</p>
+    </div>
+`;
+document.body.appendChild(qrModal);
+
+let html5QrCode = null;
+
+function openQrScanner() {
+    qrModal.classList.remove('hidden');
+    
+    html5QrCode = new Html5Qrcode("qr-reader");
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    
+    html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText, decodedResult) => {
+            // QR Code scanned successfully
+            if (decodedText && /^\d{6}$/.test(decodedText)) {
+                html5QrCode.stop().then(() => {
+                    closeQrScanner();
+                    document.getElementById('otpInput').value = decodedText;
+                    document.getElementById('otpForm').submit();
+                });
+            }
+        },
+        (errorMessage) => {
+            // Handle scan error silently
+        }
+    ).catch(err => {
+        console.error("QR Scanner error:", err);
+        alert("ไม่สามารถเปิดกล้องได้ กรุณาตรวจสอบการอนุญาตใช้งานกล้อง");
+        closeQrScanner();
+    });
+}
+
+function closeQrScanner() {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            html5QrCode = null;
+        }).catch(() => {
+            html5QrCode = null;
+        });
+    }
+    qrModal.classList.add('hidden');
+}
+
+qrModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeQrScanner();
+    }
+});
 </script>
 <?php include 'footer.php' ?>

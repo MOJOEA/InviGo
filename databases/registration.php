@@ -80,3 +80,13 @@ function deleteRegistration(int $id): bool {
     $stmt->bind_param("i", $id);
     return $stmt->execute();
 }
+
+function clearEventRegistrations(int $eventId): bool {
+    $conn = getConnection();
+    $stmt = $conn->prepare("DELETE FROM Otp_Codes WHERE registration_id IN (SELECT id FROM Registrations WHERE event_id = ?)");
+    $stmt->bind_param("i", $eventId);
+    $stmt->execute();
+    $stmt = $conn->prepare("DELETE FROM Registrations WHERE event_id = ?");
+    $stmt->bind_param("i", $eventId);
+    return $stmt->execute();
+}
