@@ -17,6 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'clear_registrations') {
+    $eventId = (int)$_POST['event_id'];
+    if (clearEventRegistrations($eventId)) {
+        $success = 'เคลียร์การลงทะเบียนสำเร็จ';
+    } else {
+        $errors[] = 'เกิดข้อผิดพลาดในการเคลียร์การลงทะเบียน';
+    }
+}
+
 $result = $conn->query("SELECT e.id, e.title, e.event_date, e.location, e.status, e.created_at, u.name as creator,
                         (SELECT COUNT(*) FROM Registrations WHERE event_id = e.id) as total_registrations
                         FROM Events e 

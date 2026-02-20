@@ -61,6 +61,15 @@
                     </td>
                     <td class="p-4 text-center">
                         <span class="font-bold"><?= $event['total_registrations'] ?></span>
+                        <?php if ($event['total_registrations'] > 0): ?>
+                            <form method="POST" action="/admin/events" class="inline ml-2" onsubmit="return confirm('แน่ใจหรือไม่ว่าต้องการเคลียร์การลงทะเบียนทั้งหมด?');">
+                                <input type="hidden" name="action" value="clear_registrations">
+                                <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
+                                <button type="submit" class="text-orange-500 hover:text-orange-700" title="เคลียร์การลงทะเบียน">
+                                    <span class="material-symbols-outlined">cleaning_services</span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center gap-2">
