@@ -12,8 +12,9 @@ const INDEX_ROUTE = 'explore';
 const MIN_AGE = 10;
 const MAX_AGE = 120;
 
+
 // === OTP Settings ===
-const OTP_MODE = 'stateless';
+const OTP_MODE = 'stateless'; // 'database' หรือ 'stateless'`
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_MINUTES = 30;
 const OTP_EXPIRY_SECONDS = 1800;

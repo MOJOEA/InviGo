@@ -20,11 +20,8 @@ function generateStatelessOtp(int $registrationId, int $eventId): array
     $timeWindow = floor(time() / OTP_EXPIRY_SECONDS);
     $data = "{$registrationId}:{$eventId}:{$timeWindow}";
     $hash = hash_hmac('sha256', $data, OTP_SECRET_KEY);
-    $otp = substr($hash, 0, OTP_LENGTH);
-    $otp = preg_replace('/[^0-9]/', '', $otp);
-    while (strlen($otp) < OTP_LENGTH) {
-        $otp .= random_int(0, 9);
-    }
+    $decimal = hexdec(substr($hash, 0, 16));
+    $otp = str_pad((string)($decimal % 1000000), OTP_LENGTH, '0', STR_PAD_LEFT);
     $expiresAt = time() + OTP_EXPIRY_SECONDS;
     return [
         'code' => $otp,
@@ -41,11 +38,8 @@ function verifyStatelessOtp(string $otpCode, int $registrationId, int $eventId):
     foreach ($windows as $window) {
         $data = "{$registrationId}:{$eventId}:{$window}";
         $hash = hash_hmac('sha256', $data, OTP_SECRET_KEY);
-        $expectedOtp = substr($hash, 0, OTP_LENGTH);
-        $expectedOtp = preg_replace('/[^0-9]/', '', $expectedOtp);
-        while (strlen($expectedOtp) < OTP_LENGTH) {
-            $expectedOtp .= '0';
-        }
+        $decimal = hexdec(substr($hash, 0, 16));
+        $expectedOtp = str_pad((string)($decimal % 1000000), OTP_LENGTH, '0', STR_PAD_LEFT);
         if (hash_equals($expectedOtp, $otpCode)) {
             return true;
         }
