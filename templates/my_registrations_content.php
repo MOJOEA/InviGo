@@ -269,16 +269,18 @@ function showOtpModal(otp, expiresAt) {
     document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
     
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = '';
-    new QRCode(qrContainer, {
-        text: otp,
-        width: 180,
-        height: 180,
-        colorDark: '#000000',
-        colorLight: '#D4FF33',
-        correctLevel: QRCode.CorrectLevel.M
-    });
+    setTimeout(() => {
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+            text: otp,
+            width: 180,
+            height: 180,
+            colorDark: '#000000',
+            colorLight: '#D4FF33',
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    }, 10);
     
     const otpExpiresEl = document.getElementById('otpExpires');
     let otpModalTimer = null;
