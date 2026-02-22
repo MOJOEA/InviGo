@@ -286,6 +286,11 @@ function showToast(message, type = 'success') {
         setTimeout(() => toast.remove(), 500);
     }, 3000);
 }
+<?php if ($otpData): ?>
+document.addEventListener('DOMContentLoaded', function() {
+    showOtpModal('<?= $otpData['code'] ?>', <?= strtotime($otpData['expires']) ?>);
+});
+<?php endif; ?>
 </script>
 
 <?php include 'footer.php' ?>
