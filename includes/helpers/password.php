@@ -22,7 +22,7 @@ function generateStatelessOtp(int $registrationId, int $eventId): array
     $hash = hash_hmac('sha256', $data, OTP_SECRET_KEY);
     $decimal = hexdec(substr($hash, 0, 16));
     $otp = str_pad((string)($decimal % 1000000), OTP_LENGTH, '0', STR_PAD_LEFT);
-    $expiresAt = time() + OTP_EXPIRY_SECONDS;
+    $expiresAt = ($timeWindow + 1) * OTP_EXPIRY_SECONDS;
     return [
         'code' => $otp,
         'expires_at' => date('Y-m-d H:i:s', $expiresAt),
