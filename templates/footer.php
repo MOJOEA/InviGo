@@ -253,5 +253,6 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </body>
 </html>
