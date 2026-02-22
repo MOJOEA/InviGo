@@ -9,6 +9,7 @@ require_once INCLUDES_DIR . '/helpers/auth.php';
 require_once INCLUDES_DIR . '/helpers/date.php';
 require_once INCLUDES_DIR . '/helpers/sanitize.php';
 require_once INCLUDES_DIR . '/helpers/password.php';
+require_once INCLUDES_DIR . '/helpers/otp.php';
 require_once INCLUDES_DIR . '/helpers/flash.php';
 require_once INCLUDES_DIR . '/helpers/format.php';
 require_once INCLUDES_DIR . '/utils/upload.php';
