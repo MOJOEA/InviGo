@@ -1,82 +1,82 @@
-# OTP System Documentation
+# เอกสารระบบ OTP
 
-## Overview
+## ภาพรวม
 
-The OTP (One-Time Password) system supports two modes:
-- **Database Mode**: Stores OTP codes in the database with expiration
-- **Stateless Mode**: Generates deterministic OTPs using HMAC without database storage
+ระบบ OTP (One-Time Password) รองรับ 2 โหมด:
+- **โหมด Database**: เก็บรหัส OTP ในฐานข้อมูลพร้อมเวลาหมดอายุ
+- **โหมด Stateless**: สร้าง OTP แบบกำหนดได้ด้วย HMAC โดยไม่ต้องเก็บในฐานข้อมูล
 
-## Configuration
+## การตั้งค่า
 
-Edit `includes/config.php`:
+แก้ไขที่ไฟล์ `includes/config.php`:
 
 ```php
-const OTP_MODE = 'stateless';        // 'database' or 'stateless'
-const OTP_LENGTH = 6;               // Number of digits
-const OTP_EXPIRY_MINUTES = 30;        // Validity period
-const OTP_EXPIRY_SECONDS = 1800;     // 30 minutes in seconds
-const OTP_SECRET_KEY = 'your-secret-key-here';  // Required for stateless mode
+const OTP_MODE = 'stateless';        // 'database' หรือ 'stateless'
+const OTP_LENGTH = 6;               // จำนวนหลัก
+const OTP_EXPIRY_MINUTES = 30;        // ระยะเวลาที่ใช้ได้
+const OTP_EXPIRY_SECONDS = 1800;     // 30 นาทีเป็นวินาที
+const OTP_SECRET_KEY = 'your-secret-key-here';  // จำเป็นสำหรับโหมด stateless
 ```
 
-## File Structure
+## โครงสร้างไฟล์
 
 ```
 includes/
 ├── helpers/
-│   ├── otp.php          # OTP generation and verification functions
-│   └── password.php     # Password hashing (separate from OTP)
-├── config.php           # OTP configuration constants
+│   ├── otp.php          # ฟังก์ชันสร้างและตรวจสอบ OTP
+│   └── password.php     # การเข้ารหัสรหัสผ่าน (แยกจาก OTP)
+├── config.php           # ค่าคงที่การตั้งค่า OTP
 databases/
-└── otp.php              # Database functions for database mode
+└── otp.php              # ฟังก์ชันฐานข้อมูลสำหรับโหมด database
 routes/
 └── events/
-    ├── otp.php          # Generate OTP endpoint
-    └── manage.php       # Verify OTP endpoint
+    ├── otp.php          # Endpoint สร้าง OTP
+    └── manage.php       # Endpoint ตรวจสอบ OTP
 templates/
-└── my_registrations_content.php  # Display OTP modal with QR code
+└── my_registrations_content.php  # แสดง modal OTP พร้อม QR code
 ```
 
-## How It Works
+## วิธีทำงาน
 
-### Database Mode
-1. User requests OTP → Creates record in `Otp_Codes` table
-2. OTP stored with expiration timestamp
-3. Verification queries database for valid, unused OTP
-4. Mark OTP as used after successful check-in
+### โหมด Database
+1. ผู้ใช้ขอ OTP → สร้าง record ในตาราง `Otp_Codes`
+2. OTP ถูกเก็บพร้อม timestamp หมดอายุ
+3. ตรวจสอบโดย query ฐานข้อมูลหา OTP ที่ยังใช้ได้และไม่ถูกใช้แล้ว
+4. Mark OTP ว่าใช้แล้วหลังเช็คอินสำเร็จ
 
-### Stateless Mode
-1. OTP generated using HMAC-SHA256 hash of:
+### โหมด Stateless
+1. OTP สร้างโดยใช้ HMAC-SHA256 hash ของ:
    - `registration_id:event_id:time_window`
-   - Time window = current time / 30 minutes
-2. Same inputs always produce same OTP within time window
-3. Verification regenerates expected OTP and compares
-4. No database storage needed
+   - Time window = เวลาปัจจุบัน / 30 นาที
+2. ข้อมูลเดิมจะได้ OTP เดียวกันภายใน time window เดียวกัน
+3. ตรวจสอบโดยสร้าง OTP ที่คาดหวังใหม่และเปรียบเทียบ
+4. ไม่ต้องเก็บในฐานข้อมูล
 
-## Security Notes
+## หมายเหตุด้านความปลอดภัย
 
-- **Stateless Mode**: Keep `OTP_SECRET_KEY` secure and unique per deployment
-- Time window tolerance: Checks current and previous window (grace period)
-- OTP expires at end of time window, not from generation time
+- **โหมด Stateless**: เก็บ `OTP_SECRET_KEY` ให้ปลอดภัยและไม่ซ้ำกันในแต่ละ deployment
+- การยอมรับ time window: ตรวจสอบทั้ง window ปัจจุบันและก่อนหน้า (grace period)
+- OTP หมดอายุที่จบ time window ไม่ใช่จากเวลาที่สร้าง
 
-## Usage
+## การใช้งาน
 
-### Generate OTP (Participant)
+### สร้าง OTP (ฝั่งผู้เข้าร่วม)
 ```php
-// In routes/events/otp.php
+// ใน routes/events/otp.php
 if (OTP_MODE === 'stateless') {
     $otpData = generateStatelessOtp($registration['id'], $eventId);
-    // Store in session, no DB write
+    // เก็บใน session ไม่ต้องเขียน DB
 } else {
     $otpCode = generateOTP(6);
     createOtp($registration['id'], $otpCode, $expiresAt);
 }
 ```
 
-### Verify OTP (Organizer)
+### ตรวจสอบ OTP (ฝั่งผู้จัด)
 ```php
-// In routes/events/manage.php
+// ใน routes/events/manage.php
 if (OTP_MODE === 'stateless') {
-    // Find matching registration by verifying OTP
+    // หา registration ที่ตรงกันโดยตรวจสอบ OTP
     foreach ($registrations as $reg) {
         if (verifyStatelessOtp($otpCode, $reg['id'], $eventId)) {
             checkInRegistration($reg['id']);
@@ -92,11 +92,11 @@ if (OTP_MODE === 'stateless') {
 }
 ```
 
-## QR Code Display
+## การแสดง QR Code
 
-The OTP modal displays:
-- QR Code (generated via API: `api.qrserver.com`)
-- OTP code in large text
-- Countdown timer
+Modal OTP แสดง:
+- QR Code (สร้างด้วย library: `qrcode.js`)
+- รหัส OTP ตัวใหญ่
+- นับถอยหลังเวลาหมดอายุ
 
-Located in: `templates/my_registrations_content.php`
+อยู่ที่: `templates/my_registrations_content.php`
