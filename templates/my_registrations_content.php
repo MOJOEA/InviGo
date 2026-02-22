@@ -269,18 +269,8 @@ function showOtpModal(otp, expiresAt) {
     document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
     
-    setTimeout(() => {
-        const qrContainer = document.getElementById('qrcode');
-        qrContainer.innerHTML = '';
-        new QRCode(qrContainer, {
-            text: otp,
-            width: 180,
-            height: 180,
-            colorDark: '#000000',
-            colorLight: '#D4FF33',
-            correctLevel: QRCode.CorrectLevel.M
-        });
-    }, 10);
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(otp)}" alt="QR Code" width="180" height="180">`;
     
     const otpExpiresEl = document.getElementById('otpExpires');
     let otpModalTimer = null;
