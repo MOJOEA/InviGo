@@ -176,7 +176,7 @@
             <span class="material-symbols-outlined">edit</span> แก้ไขโปรไฟล์
         </a>
         <?php if (($user['role'] ?? 0) == 1): ?>
-        <a href="/admin" class="neo-btn flex-1 bg-red-100 text-red-600 py-3 font-bold text-center inline-flex items-center justify-center gap-2">
+        <a href="/admin" class="neo-btn flex-1 bg-blue-600 text-white py-3 font-bold text-center inline-flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">admin_panel_settings</span>
             จัดการระบบ
         </a>

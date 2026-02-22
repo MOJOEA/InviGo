@@ -301,7 +301,9 @@ function showToast(message, type = 'success') {
 }
 <?php if ($otpData): ?>
 document.addEventListener('DOMContentLoaded', function() {
-    showOtpModal('<?= $otpData['code'] ?>', <?= strtotime($otpData['expires']) ?>);
+    setTimeout(() => {
+        showOtpModal('<?= $otpData['code'] ?>', <?= strtotime($otpData['expires']) ?>);
+    }, 800);
 });
 <?php endif; ?>
 </script>
