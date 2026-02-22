@@ -219,7 +219,7 @@ if (otpExpiryTime > 0) {
             <p class="text-sm text-gray-500 mb-4">แสดงรหัสนี้ให้ผู้จัดงานสแกน</p>
             
             <div class="bg-[#D4FF33] border-4 border-black rounded-xl p-4 mb-4">
-                <div id="qrcode" class="flex justify-center mb-3"></div>
+                <div id="qrcode" class="flex justify-center mb-3 min-h-[180px] items-center bg-white rounded-lg p-2"></div>
                 <p class="text-xs text-gray-600 mb-1">หรือกรอกรหัส:</p>
                 <span id="otpCode" class="text-4xl font-black tracking-widest"></span>
             </div>
@@ -270,7 +270,10 @@ function showOtpModal(otp, expiresAt) {
     document.addEventListener('keydown', handleOtpKeydown);
     
     const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(otp)}" alt="QR Code" width="180" height="180">`;
+    qrContainer.innerHTML = '';
+    QRCode.toCanvas(qrContainer, otp, { width: 180, height: 180 }, function(error) {
+        if (error) console.error(error);
+    });
     
     const otpExpiresEl = document.getElementById('otpExpires');
     let otpModalTimer = null;
