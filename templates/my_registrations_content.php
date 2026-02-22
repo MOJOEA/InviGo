@@ -212,8 +212,8 @@ if (otpExpiryTime > 0) {
 <?php endif; ?>
 </script>
 
-<div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-    <div id="otpModalContent" class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black] transform scale-95 opacity-0 transition-all duration-300 ease-out">
+<div id="otpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div id="otpModalContent" class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
         <div class="text-center">
             <h3 class="text-xl font-black mb-2">รหัส OTP เช็คอิน</h3>
             <p class="text-sm text-gray-500 mb-4">แสดงรหัสนี้ให้ผู้จัดงานสแกน</p>
@@ -266,17 +266,8 @@ document.getElementById('withdrawModal').addEventListener('click', function(e) {
 
 function showOtpModal(otp, expiresAt) {
     document.getElementById('otpCode').textContent = otp;
-    const modal = document.getElementById('otpModal');
-    const content = document.getElementById('otpModalContent');
-    modal.classList.remove('hidden');
+    document.getElementById('otpModal').classList.remove('hidden');
     document.addEventListener('keydown', handleOtpKeydown);
-    
-    requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0');
-        modal.classList.add('opacity-100');
-        content.classList.remove('scale-95', 'opacity-0');
-        content.classList.add('scale-100', 'opacity-100');
-    });
     
     const qrContainer = document.getElementById('qrcode');
     qrContainer.innerHTML = '';
@@ -327,22 +318,12 @@ function showOtpModal(otp, expiresAt) {
 }
 
 function closeOtpModal() {
-    const modal = document.getElementById('otpModal');
-    const content = document.getElementById('otpModalContent');
-    
-    modal.classList.remove('opacity-100');
-    modal.classList.add('opacity-0');
-    content.classList.remove('scale-100', 'opacity-100');
-    content.classList.add('scale-95', 'opacity-0');
-    
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        document.removeEventListener('keydown', handleOtpKeydown);
-        if (window.otpModalTimer) {
-            clearInterval(window.otpModalTimer);
-            window.otpModalTimer = null;
-        }
-    }, 300);
+    document.getElementById('otpModal').classList.add('hidden');
+    document.removeEventListener('keydown', handleOtpKeydown);
+    if (window.otpModalTimer) {
+        clearInterval(window.otpModalTimer);
+        window.otpModalTimer = null;
+    }
 }
 
 function handleOtpKeydown(e) {
