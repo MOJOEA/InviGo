@@ -271,8 +271,13 @@ function showOtpModal(otp, expiresAt) {
     
     const qrContainer = document.getElementById('qrcode');
     qrContainer.innerHTML = '';
-    QRCode.toCanvas(qrContainer, otp, { width: 180, height: 180 }, function(error) {
-        if (error) console.error(error);
+    new QRCode(qrContainer, {
+        text: otp,
+        width: 180,
+        height: 180,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
     });
     
     const otpExpiresEl = document.getElementById('otpExpires');
