@@ -129,14 +129,6 @@ $age36plusPct = $totalApproved > 0 ? round(($age36plus / $totalApproved) * 100) 
     <a href="/events/<?= $event['id'] ?>/edit" class="neo-btn-small bg-[#D4FF33] px-4 py-2 font-bold flex items-center gap-2 hover:bg-[#cbf531]">
         <span class="material-symbols-outlined">edit</span> แก้ไขกิจกรรม
     </a>
-    <?php if (!empty($registrations)): ?>
-    <button onclick="showClearModal()" class="neo-btn-small bg-orange-100 text-orange-700 px-4 py-2 font-bold flex items-center gap-2 hover:bg-orange-200">
-        <span class="material-symbols-outlined">cleaning_services</span> เคลียร์การลงทะเบียน
-    </button>
-    <?php endif; ?>
-    <button onclick="showDeleteModal()" class="neo-btn-small bg-red-100 text-red-600 px-4 py-2 font-bold flex items-center gap-2 hover:bg-red-200">
-        <span class="material-symbols-outlined">delete</span> ลบกิจกรรม
-    </button>
 </div>
 <h3 class="font-black text-xl mb-4 flex items-center gap-2">
     <span class="material-symbols-outlined">group</span> รายชื่อผู้เข้าร่วม (<?= count($registrations) ?>)
@@ -320,55 +312,7 @@ function renderRegRow($reg, $eventId) {
 <?php }
 ?>
 
-<!-- Clear Registrations Modal -->
-<div id="clearModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-orange-100 border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-3xl text-orange-600">cleaning_services</span>
-            </div>
-            <h3 class="text-xl font-black mb-2">ยืนยันการเคลียร์การลงทะเบียน</h3>
-            <p class="text-gray-500 mb-6">การดำเนินการนี้จะลบผู้ลงทะเบียนทั้งหมดออกจากกิจกรรมนี้ และไม่สามารถเรียกคืนได้</p>
-            <div class="flex gap-3">
-                <button onclick="closeClearModal()" class="neo-btn flex-1 bg-gray-200 py-3 font-bold">
-                    ยกเลิก
-                </button>
-                <form method="POST" action="/events/<?= $event['id'] ?>/clear-registrations" class="flex-1">
-                    <button type="submit" class="neo-btn w-full bg-orange-400 text-white py-3 font-bold inline-flex items-center justify-center gap-1">
-                        <span class="material-symbols-outlined text-sm">check</span>
-                        ยืนยัน
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Delete Event Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border-4 border-black rounded-2xl p-6 max-w-sm w-full shadow-[8px_8px_0px_0px_black]">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-red-100 border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-3xl text-red-600">delete_forever</span>
-            </div>
-            <h3 class="text-xl font-black mb-2">ยืนยันการลบกิจกรรม</h3>
-            <p class="text-gray-500 mb-2">คุณต้องการลบกิจกรรม</p>
-            <p class="font-bold text-black mb-6 text-lg"><?= sanitize($event['title']) ?></p>
-            <p class="text-red-500 text-sm mb-6">การดำเนินการนี้ไม่สามารถเรียกคืนได้!</p>
-            <div class="flex gap-3">
-                <button onclick="closeDeleteModal()" class="neo-btn flex-1 bg-gray-200 py-3 font-bold">
-                    ยกเลิก
-                </button>
-                <form method="POST" action="/events/<?= $event['id'] ?>/delete" class="flex-1">
-                    <button type="submit" class="neo-btn w-full bg-red-400 text-white py-3 font-bold inline-flex items-center justify-center gap-1">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                        ลบกิจกรรม
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
 function toggleAccordion(button) {
@@ -378,48 +322,6 @@ function toggleAccordion(button) {
     });
     item.classList.toggle('active');
 }
-
-function showClearModal() {
-    document.getElementById('clearModal').classList.remove('hidden');
-    document.addEventListener('keydown', handleClearKeydown);
-}
-
-function closeClearModal() {
-    document.getElementById('clearModal').classList.add('hidden');
-    document.removeEventListener('keydown', handleClearKeydown);
-}
-
-function handleClearKeydown(e) {
-    if (e.key === 'Escape') {
-        e.preventDefault();
-        closeClearModal();
-    }
-}
-
-document.getElementById('clearModal').addEventListener('click', function(e) {
-    if (e.target === this) closeClearModal();
-});
-
-function showDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('hidden');
-    document.addEventListener('keydown', handleDeleteKeydown);
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-    document.removeEventListener('keydown', handleDeleteKeydown);
-}
-
-function handleDeleteKeydown(e) {
-    if (e.key === 'Escape') {
-        e.preventDefault();
-        closeDeleteModal();
-    }
-}
-
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) closeDeleteModal();
-});
 
 const eventId = <?= $event['id'] ?>;
 const statsCache = {};
