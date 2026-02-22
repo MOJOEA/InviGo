@@ -21,12 +21,13 @@ if (!$event) {
     exit;
 }
 invalidateOtps($registration['id']);
-$otpCode = generateOTP(6);
-$expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
-if (createOtp($registration['id'], $otpCode, $expiresAt)) {
+$event = getEventById($eventId);
+
+if (OTP_MODE === 'stateless') {
+    $otpData = generateStatelessOtp($registration['id'], $eventId);
     $_SESSION['otp_data'] = [
-        'code' => $otpCode,
-        'expires' => $expiresAt,
+        'code' => $otpData['code'],
+        'expires' => $otpData['expires_at'],
         'event_title' => $event['title'],
         'event_date' => $event['event_date'],
         'location' => $event['location'],
@@ -35,7 +36,22 @@ if (createOtp($registration['id'], $otpCode, $expiresAt)) {
     header('Location: /my-registrations?show_otp=1');
     exit;
 } else {
-    setFlashMessage('error', 'เกิดข้อผิดพลาดในการสร้าง OTP');
-    header('Location: /my-registrations');
-    exit;
+    $otpCode = generateOTP(6);
+    $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+    if (createOtp($registration['id'], $otpCode, $expiresAt)) {
+        $_SESSION['otp_data'] = [
+            'code' => $otpCode,
+            'expires' => $expiresAt,
+            'event_title' => $event['title'],
+            'event_date' => $event['event_date'],
+            'location' => $event['location'],
+            'organizer_name' => $event['organizer_name']
+        ];
+        header('Location: /my-registrations?show_otp=1');
+        exit;
+    } else {
+        setFlashMessage('error', 'เกิดข้อผิดพลาดในการสร้าง OTP');
+        header('Location: /my-registrations');
+        exit;
+    }
 }

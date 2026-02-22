@@ -16,13 +16,31 @@ $registrations = getRegistrationsByEvent($eventId);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp_code'])) {
     $otpCode = trim($_POST['otp_code'] ?? '');
     if (strlen($otpCode) === 6) {
-        $otpData = verifyOtp($otpCode, $eventId);
-        if ($otpData) {
-            markOtpUsed($otpData['id']);
-            checkInRegistration($otpData['reg_id']);
-            setFlashMessage('success', 'เช็คชื่อสำเร็จ');
+        if (OTP_MODE === 'stateless') {
+            $foundReg = null;
+            foreach ($registrations as $reg) {
+                if ($reg['status'] === 'approved' && !$reg['checked_in']) {
+                    if (verifyStatelessOtp($otpCode, $reg['id'], $eventId)) {
+                        $foundReg = $reg;
+                        break;
+                    }
+                }
+            }
+            if ($foundReg) {
+                checkInRegistration($foundReg['id']);
+                setFlashMessage('success', 'เช็คชื่อสำเร็จ');
+            } else {
+                setFlashMessage('error', 'รหัส OTP ไม่ถูกต้องหรือหมดอายุ');
+            }
         } else {
-            setFlashMessage('error', 'รหัส OTP ไม่ถูกต้องหรือหมดอายุ');
+            $otpData = verifyOtp($otpCode, $eventId);
+            if ($otpData) {
+                markOtpUsed($otpData['id']);
+                checkInRegistration($otpData['reg_id']);
+                setFlashMessage('success', 'เช็คชื่อสำเร็จ');
+            } else {
+                setFlashMessage('error', 'รหัส OTP ไม่ถูกต้องหรือหมดอายุ');
+            }
         }
     } else {
         setFlashMessage('error', 'รหัส OTP ต้องมี 6 หลัก');

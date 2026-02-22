@@ -23,7 +23,7 @@ function getFilePath(string $uri): string
     if (preg_match('/^events\/(\d+)$/', $uri, $matches)) {
         return ROUTE_DIR . '/events/view.php';
     }
-    if (preg_match('/^events\/(\d+)\/([\w-]+)$/', $uri, $matches)) {
+    if (preg_match('/^events\/\d+\/(\w+)$/', $uri, $matches)) {
         return ROUTE_DIR . '/events/' . $matches[1] . '.php';
     }
     if (preg_match('/^events\/(\w+)$/', $uri, $matches)) {

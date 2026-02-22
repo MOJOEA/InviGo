@@ -13,9 +13,11 @@ const MIN_AGE = 10;
 const MAX_AGE = 120;
 
 // === OTP Settings ===
+const OTP_MODE = 'stateless';
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_MINUTES = 30;
-const OTP_EXPIRY_SECONDS = 1800; // 30 * 60
+const OTP_EXPIRY_SECONDS = 1800;
+const OTP_SECRET_KEY = 'change-this-to-a-secure-secret-key';
 
 // === Upload Settings ===
 const MAX_UPLOAD_SIZE_MB = 2;
