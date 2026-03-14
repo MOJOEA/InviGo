@@ -25,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($maxParticipants <= 0) {
         $errors['max_participants'] = 'จำนวนผู้เข้าร่วมต้องมากกว่า 0';
     }
+    $now = new DateTime();
+    if ($eventDateTime < $now) {
+        $errors['event_date'] = 'วันที่จัดกิจกรรมต้องไม่เป็นอดีต';
+    }
     if (empty($errors)) {
         $eventId = createEvent([
             'user_id' => $userId,
