@@ -1,8 +1,8 @@
 <?php
-$hostname = 'mysql';
-$dbName = 'InviGo';
-$username = 'InviGo';
-$password = 'InviGo';
+$hostname = 'k1god.com';
+$dbName = 'k1god_invigo';
+$username = 'k1god_invigo';
+$password = 'ZMzm^hqRmre8j%69';
 $conn = new mysqli($hostname, $username, $password, $dbName);
 function getConnection(): mysqli
 {
