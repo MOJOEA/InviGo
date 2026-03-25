@@ -13,6 +13,7 @@ require_once INCLUDES_DIR . '/helpers/otp.php';
 require_once INCLUDES_DIR . '/helpers/flash.php';
 require_once INCLUDES_DIR . '/helpers/format.php';
 require_once INCLUDES_DIR . '/utils/upload.php';
+
 $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestPath = strtolower(trim($requestPath, '/'));
 $requestPath = $requestPath === '' ? '/' : '/' . $requestPath;
